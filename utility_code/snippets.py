@@ -3,6 +3,59 @@
 #############################################################
 
 
+################################################################
+########### NEW functions to get and parse club urls ###########
+
+def parse_club_urls(soup):
+    table = soup.find('tbody')
+    links = table.find_all('a')
+    club_urls = ["https://fbref.com" + link['href'] for link in links if 'squads' in link['href']]
+    return club_urls
+
+
+def get_club_urls():
+    url = 'https://fbref.com/en/comps/Big5/Big-5-European-Leagues-Stats'
+    soup = BeautifulSoup(requests.get(url).text, 'html.parser')
+    club_urls = parse_club_urls(soup)
+    return club_urls
+
+################################################################
+########## NEW functions to get and parse player urls ##########
+def parse_player_url(soup):
+    global counter
+    global player_url_dict 
+
+
+    table = soup.find('tbody')
+    links = table.find_all('a')
+    player_urls = ["https://fbref.com" + link['href']\
+        for link in links if\
+        'players' in link['href'] and\
+        'matchlogs' not in link['href']]
+    
+    for url in player_urls:
+        counter += 1
+        player_url_dict[counter] = url
+
+
+
+def get_player_urls(club_url): #output should be a url
+    # time.sleep(2*random.random) #use throttle as class attribute
+    soup = BeautifulSoup(requests.get(club_url).text, 'html.parser')
+    parse_player_url(soup)
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor: 
+    counter = 0
+    player_url_dict = {}
+    executor.map(get_player_urls, club_urls[:2])###remove slicing
+
+
+
+
+
+
+
+
 
 #### extracting player personal data and stats from fbref#### 
 url = "https://fbref.com/en/players/21a66f6a/Harry-Kane"
