@@ -14,22 +14,19 @@ class ClubURLsScraper(AbstractScraper):
         self.html = None
         self.soup = None
         self.result = None
-        self.max_workers = 3
+        self.max_workers = 1
         self.counter = 0
 
-    def run_crawler(self, url):
-        print("in run crawler", url)
-        self.get_soup(url)
-        self.extract_data()
-
-    def start_crawl_threads(self):        
+    def run(self):
+        #validate whether there's a URL        
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor: 
-            executor.map(self.run_crawler, self.urls)
+            executor.map(self.crawl, self.urls)
 
-    def get_soup(self, url):
-        print("in get soup", url)        
+    def crawl(self, url):
+        print("in crawl", url)
         self.html = requests.get(url).text
         self.soup = BeautifulSoup(self.html, 'html.parser')
+        self.extract_data()
         
     def extract_data(self):
         print("extract data")        
@@ -40,6 +37,3 @@ class ClubURLsScraper(AbstractScraper):
     def save_result(self, file_name):
         pickle.dump(self.result,open(file_name,'wb'))
 
-
-# if __name__ == "__main__":
-#     print("club url scraper imported")
