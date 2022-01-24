@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import pickle
 
 class AbstractScraper(ABC):
     def __init__(self) -> None:
@@ -10,11 +11,11 @@ class AbstractScraper(ABC):
         self.max_workers = 3
 
     @abstractmethod
-    def run_crawler(self):
+    def run_crawler(self, url):
         pass
 
     @abstractmethod
-    def start_crawl_threads(self, urls):        
+    def start_crawl_threads(self):        
         pass
 
     @abstractmethod    
@@ -22,17 +23,17 @@ class AbstractScraper(ABC):
         pass
 
     @abstractmethod        
-    def extract_data(self, soup):
+    def extract_data(self):
         pass
 
-    @abstractmethod    
-    def show_result(self, result):
-        pass
+    # @abstractmethod    
+    # def show_result(self, result):
+    #     pass
 
-    @abstractmethod    
-    def save_result(self,result):
-        pass
+    # @abstractmethod    
+    # def save_result(self, file_name):## add parser file type (eg. csv, df) and functionality. maybe convert this to actual function?
+    #     pickle.dump(self.result,open(file_name,'wb'))
 
-if __name__ == "__main__":
-    print("abstract scraper imported")
+# if __name__ == "__main__":
+#     print("abstract scraper imported")
 

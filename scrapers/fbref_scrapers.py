@@ -1,10 +1,7 @@
 
 from scrapers.abstract_scraper import AbstractScraper
-import threading
 import concurrent.futures
-import re
 import pickle
-
 import requests
 from bs4 import BeautifulSoup
 from lxml import etree
@@ -20,29 +17,29 @@ class ClubURLsScraper(AbstractScraper):
         self.max_workers = 3
         self.counter = 0
 
-    def run_crawler(self):
-        self.get_soup(self.urls)
-        self.extract_data(self.soup)
+    def run_crawler(self, url):
+        print("in run crawler", url)
+        self.get_soup(url)
+        self.extract_data()
 
-    def start_crawl_threads(self, urls):        
+    def start_crawl_threads(self):        
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor: 
             executor.map(self.run_crawler, self.urls)
 
     def get_soup(self, url):
+        print("in get soup", url)        
         self.html = requests.get(url).text
         self.soup = BeautifulSoup(self.html, 'html.parser')
         
-    def extract_data(self, soup):
-        table = soup.find('tbody')
+    def extract_data(self):
+        print("extract data")        
+        table = self.soup.find('tbody')
         links = table.find_all('a')
-        result = ["https://fbref.com" + link['href'] for link in links if 'squads' in link['href']]
-    
-    def show_result(self, result):
-        print(result)
-
-    def save_result(self,result, file_name):
-        pickle.dump(result,open(file_name,'wb'))
+        self.result = ["https://fbref.com" + link['href'] for link in links if 'squads' in link['href']]
+       
+    def save_result(self, file_name):
+        pickle.dump(self.result,open(file_name,'wb'))
 
 
-if __name__ == "__main__":
-    print("club url scraper imported")
+# if __name__ == "__main__":
+#     print("club url scraper imported")
