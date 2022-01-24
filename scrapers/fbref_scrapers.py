@@ -34,6 +34,6 @@ class ClubURLsScraper(AbstractScraper):
         links = table.find_all('a')
         self.result = ["https://fbref.com" + link['href'] for link in links if 'squads' in link['href']]
        
-    def save_result(self, file_name):
-        pickle.dump(self.result,open(file_name,'wb'))
+    # def save_result(self, file_name):
+    #     pickle.dump(self.result,open(file_name,'wb'))
 

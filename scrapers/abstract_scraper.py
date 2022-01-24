@@ -24,13 +24,9 @@ class AbstractScraper(ABC):
         pass
 
     # @abstractmethod    
-    # def show_result(self, result):
-    #     pass
-
-    @abstractmethod    
     def save_result(self, file_name):## add parser file type (eg. csv, df) and functionality. maybe convert this to actual function?
-        pass
-        # pickle.dump(self.result,open(file_name,'wb'))
+        # pass
+        pickle.dump(self.result,open(file_name,'wb'))
 
 # if __name__ == "__main__":
 #     print("abstract scraper imported")
