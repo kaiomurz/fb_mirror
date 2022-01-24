@@ -1,5 +1,5 @@
 
-from abstract_scraper import AbstractScraper
+from scrapers.abstract_scraper import AbstractScraper
 import threading
 import concurrent.futures
 import re
@@ -42,3 +42,7 @@ class ClubURLsScraper(AbstractScraper):
 
     def save_result(self,result, file_name):
         pickle.dump(result,open(file_name,'wb'))
+
+
+if __name__ == "__main__":
+    print("club url scraper imported")

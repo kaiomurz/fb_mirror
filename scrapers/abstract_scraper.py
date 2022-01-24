@@ -33,4 +33,6 @@ class AbstractScraper(ABC):
     def save_result(self,result):
         pass
 
+if __name__ == "__main__":
+    print("abstract scraper imported")
 
