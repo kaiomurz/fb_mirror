@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
 import pickle
+import concurrent.futures
+import requests
+from bs4 import BeautifulSoup
+
 
 class AbstractScraper(ABC):
     def __init__(self) -> None:
@@ -10,24 +14,25 @@ class AbstractScraper(ABC):
         self.result = None
         self.max_workers = 3
 
-    @abstractmethod
-    def run(self):        
-        pass
+    def run(self):
+    #validate whether there's a URL        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor: 
+            executor.map(self.crawl, self.urls)
 
-    @abstractmethod
+
     def crawl(self, url):
-        pass
-
+        print("in crawl", url)
+        self.html = requests.get(url).text
+        self.soup = BeautifulSoup(self.html, 'html.parser')
+        self.extract_data()
 
     @abstractmethod        
     def extract_data(self):
         pass
 
     # @abstractmethod    
-    def save_result(self, file_name):## add parser file type (eg. csv, df) and functionality. maybe convert this to actual function?
-        # pass
+    def save_result(self, file_name):## add parser file type (eg. csv, or pickle)
         pickle.dump(self.result,open(file_name,'wb'))
 
-# if __name__ == "__main__":
-#     print("abstract scraper imported")
+
 

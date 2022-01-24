@@ -1,15 +1,31 @@
-
-from scrapers.abstract_scraper import AbstractScraper
-import concurrent.futures
-import pickle
-import requests
-from bs4 import BeautifulSoup
 from lxml import etree
 import pandas as pd
 
-class ClubURLsScraper(AbstractScraper):
+from scrapers import abstract_scraper as a
+
+
+class ClubURLsScraper(a.AbstractScraper):
     def __init__(self) -> None:
-        print("Club URL scraper")
+        print("Club URLs scraper")
+        self.urls = ['https://fbref.com/en/comps/Big5/Big-5-European-Leagues-Stats']
+        self.html = None
+        self.soup = None
+        self.result = None
+        self.max_workers = 1
+        self.counter = 0
+    
+        
+    def extract_data(self):
+        print("extract data")        
+        table = self.soup.find('tbody')
+        links = table.find_all('a')
+        self.result = ["https://fbref.com" + link['href'] for link in links if 'squads' in link['href']]
+       
+  
+
+class PlayerURLsScraper(a.AbstractScraper):
+    def __init__(self) -> None:
+        print("Player URLs scraper")
         self.urls = []
         self.html = None
         self.soup = None
@@ -33,7 +49,4 @@ class ClubURLsScraper(AbstractScraper):
         table = self.soup.find('tbody')
         links = table.find_all('a')
         self.result = ["https://fbref.com" + link['href'] for link in links if 'squads' in link['href']]
-       
-    # def save_result(self, file_name):
-    #     pickle.dump(self.result,open(file_name,'wb'))
 
