@@ -34,11 +34,9 @@ class PlayerURLsScraper(a.AbstractScraper):
         for link in links if\
         'players' in link['href'] and\
         'matchlogs' not in link['href']]
-        # self.result += player_urls
-        # print("after extraction", player_urls)
-        for url in player_urls:### slicing for testing only. drop eventually.
+
+        for url in player_urls:
             print("in loop", url)
             self.counter += 1
             self.result[self.counter] = url
-            # self.result[self.counter] = url
 
