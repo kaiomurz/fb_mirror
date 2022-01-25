@@ -17,11 +17,10 @@ class AbstractScraper(ABC):
 
     def run(self):
     #validate whether there's a URL        
-        # print("in run")
-        # with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor: 
-        #     executor.map(self.crawl, self.urls)
-        for url in self.urls:
-            self.crawl(url)
+        print("in run")
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor: 
+            executor.map(self.crawl, self.urls)
+        
 
     def crawl(self, url):
         print("in crawl", url)
