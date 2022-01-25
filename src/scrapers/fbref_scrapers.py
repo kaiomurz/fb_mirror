@@ -87,9 +87,9 @@ class PlayerStatsScraper(a.AbstractScraper):
         
         name_tag = self.soup.find("h1",attrs={"itemprop":"name"})
         personal_info["name"] = name_tag.text.strip("\n").strip("\n")
-        personal_info["full_name"] = name_tag.parent.next_sibling.text
+        # personal_info["full_name"] = name_tag.parent.next_sibling.text
         
-        
+        #### get club!
 
         # birth_place = soup.find(attrs={"itemprop":"birthPlace"}).text
         personal_info["birth_date"] = self.soup.find(attrs={"itemprop":"birthDate"})["data-birth"]
