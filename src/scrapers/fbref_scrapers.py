@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from scrapers import abstract_scraper as a
+# from utility_code.snippets import clean_df
 
 
 class ClubURLsScraper(a.AbstractScraper):
@@ -109,6 +110,39 @@ class PlayerStatsScraper(a.AbstractScraper):
 
     def create_personal_info_df(self):
         self.personal_info_df = pd.DataFrame.from_dict(self.personal_info_dict, orient='index')
+
+        
+    def get_stats(self): #add player ID column/ add df to stats_df/check for goalies
+        tables = pd.read_html(self.html)
+        df = tables[2]        
+        df = self.clean_df(df).copy()
+        for i in range(3, len(tables)):
+            new_df = self.clean_df(tables[i]).copy()
+            df = pd.concat([df,new_df[new_df.columns[6:]]], axis=1)
+        if self.stats_df == None:
+            self.stats_df= df.copy()
+        else:            
+            pd.concat([self.stats_df, df.copy()])
+
+    @staticmethod    
+    def clean_df(df):
+        df = df.drop('Matches', axis=1, level=1) 
+
+        #drop top level from general data column names
+        new_columns = list(df.columns[:6].droplevel()) + list(df.columns[6:]) 
+        df.columns = new_columns
+
+        # truncate df after list of seasons
+        loc = 0
+        for i, season in enumerate(df['Season']):
+            if str(season).endswith('Seasons'):
+                loc = i
+                break
+
+        return df.head(loc)
+
+
+        
 
 
 #pd.DataFrame.from_dict(d, orient='index')

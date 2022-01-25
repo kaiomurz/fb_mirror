@@ -17,3 +17,5 @@ pss = PlayerStatsScraper()
 pss.urls_dict = urls_dict
 pss.set_urls()
 pss.run()
+pss.create_personal_info_df()
+pss.get_stats()
