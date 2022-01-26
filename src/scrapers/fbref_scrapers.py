@@ -26,7 +26,7 @@ class PlayerURLsScraper(a.AbstractScraper):
         print("Player URLs scraper")        
         self.max_workers = 1
         self.result = {}
-        self.counter = 0    
+        self.player_id_counter = 0    
     
         
     def extract_data(self):
@@ -38,8 +38,8 @@ class PlayerURLsScraper(a.AbstractScraper):
         'matchlogs' not in link['href']]
 
         for url in player_urls:
-            self.counter += 1
-            self.result[url] = self.counter
+            self.player_id_counter += 1
+            self.result[url] = self.player_id_counter
 
 
 class PlayerStatsScraper(a.AbstractScraper):
@@ -50,7 +50,7 @@ class PlayerStatsScraper(a.AbstractScraper):
         self.current_url = None
         self.personal_info_dict = {}
         self.personal_info_df = None
-        self.stats_df = None
+        self.stats_df = "Empty"
         self.result = {}# dict keys are "personal info" and "stats"
         
    
@@ -79,6 +79,7 @@ class PlayerStatsScraper(a.AbstractScraper):
         # except:
         #     raise KeyError
         self.personal_info_dict[player_key] = personal_info 
+        self.get_stats()
         # print('pi dict', self.personal_info_dict)
 
     def get_personal_info(self):
@@ -88,9 +89,22 @@ class PlayerStatsScraper(a.AbstractScraper):
         
         name_tag = self.soup.find("h1",attrs={"itemprop":"name"})
         personal_info["name"] = name_tag.text.strip("\n").strip("\n")
+        personal_info["player_id"] = self.urls_dict[self.current_url]
         # personal_info["full_name"] = name_tag.parent.next_sibling.text
         
         #### get club!
+
+        # get position,footedness, club
+        strongs = self.soup.find_all('strong')
+        for strong in strongs:
+            if "Position" in strong.text:
+                personal_info["position"] = strong.next_sibling.strip("\xa0 ").strip("\xa0▪")
+            if "Footed:" in strong.text:
+                personal_info["footedness"] = strong.next_sibling.strip(" ")
+            if "Club" in strong.text:
+                personal_info["club"] = strong.next_sibling.next_sibling.text
+
+
 
         # birth_place = soup.find(attrs={"itemprop":"birthPlace"}).text
         personal_info["birth_date"] = self.soup.find(attrs={"itemprop":"birthDate"})["data-birth"]
@@ -112,16 +126,28 @@ class PlayerStatsScraper(a.AbstractScraper):
         self.personal_info_df = pd.DataFrame.from_dict(self.personal_info_dict, orient='index')
 
         
-    def get_stats(self): #add player ID column/ add df to stats_df/check for goalies
+    def get_stats(self): #check for goalies
+        if self.personal_info_dict[self.urls_dict[self.current_url]]["position"] == 'GK':
+            return
+        print("in get_stats")
         tables = pd.read_html(self.html)
         df = tables[2]        
+        # clean first table
         df = self.clean_df(df).copy()
+        print("first table cleaned")
+        #Concatenate rest of the tables
         for i in range(3, len(tables)):
             new_df = self.clean_df(tables[i]).copy()
             df = pd.concat([df,new_df[new_df.columns[6:]]], axis=1)
-        if self.stats_df == None:
+        print("tables concatenated")
+        print(df.head())
+        # add current player's df to stats_df
+        if str(type(self.stats_df)) != "<class 'pandas.core.frame.DataFrame'>":
+            print("first player")
             self.stats_df= df.copy()
-        else:            
+            print(self.stats_df.head())
+        else:
+            print("columns equal:", self.stats_df.columns == df.columns)            
             pd.concat([self.stats_df, df.copy()])
 
     @staticmethod    
