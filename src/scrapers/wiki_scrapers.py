@@ -4,9 +4,9 @@ from scrapers import abstract_scraper as a
 
 class WikiContentScraper(a.AbstractScraper):
     def __init__(self) -> None:
-        self.url = "https://en.wikipedia.org/wiki/Lionel_Messi"
+        self.urls = ["https://en.wikipedia.org/wiki/Lionel_Messi"]
         self.previous_is_p = False
-        content = re.compile('(h[2-9])|p')
+        self.content = re.compile('(h[2-9])|p')
         # heading = re.compile('(h[2-9])')
         self.header_order = ['h2','h3','h4','h5']
         self.content_set = set()
@@ -15,11 +15,10 @@ class WikiContentScraper(a.AbstractScraper):
         self.header_text_dict = {}
         self.header_stack = []
         self.exclude_set = {"Contents", "See also", "Notes", "References", "External links", "Navigation menu"}
+        self.max_workers = 1
 
 
-
-
-    def extract_content(self):
+    def extract_data(self):
         self.body = self.soup.find("div", class_="mw-parser-output")
         h2 = self.soup.find("h2") ### delete if not needed
 
@@ -62,8 +61,8 @@ class WikiContentScraper(a.AbstractScraper):
         else:
             return text
 
-    def update_header_text_dict(self):
-            header_index = self.header_order.index(self.current_header)
+    def update_header_text_dict(self, current_header):
+            header_index = self.header_order.index(current_header)
             for header in self.header_order[header_index:]:
                 # print(header)
                 try:
