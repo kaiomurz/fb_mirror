@@ -190,7 +190,7 @@ def clean_header(text):
 exclude_set = {"Contents", "See also", "Notes", "References", "External links", "Navigation menu"}
 
 body = soup.find("div", class_="mw-parser-output")
-# h2 = soup.find("h2")
+h2 = soup.find("h2")
 content = re.compile('(h[2-9])|p')
 # heading = re.compile('(h[2-9])')
 header_order = ['h2','h3','h4','h5']
