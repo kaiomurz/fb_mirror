@@ -53,6 +53,7 @@ class PlayerStatsScraper(a.AbstractScraper):
         self.stats_df = "Empty"
         self.result = {}# dict keys are "personal info" and "stats"
         
+        
    
     def set_urls(self):
         self.urls = list(self.urls_dict.keys())
@@ -92,7 +93,7 @@ class PlayerStatsScraper(a.AbstractScraper):
         personal_info["player_id"] = self.urls_dict[self.current_url]
         # personal_info["full_name"] = name_tag.parent.next_sibling.text
         
-        #### get club!
+        
 
         # get position,footedness, club
         strongs = self.soup.find_all('strong')
@@ -126,9 +127,13 @@ class PlayerStatsScraper(a.AbstractScraper):
         self.personal_info_df = pd.DataFrame.from_dict(self.personal_info_dict, orient='index')
 
         
-    def get_stats(self): #check for goalies
+    def get_stats(self): 
+        #check for goalies
         if self.personal_info_dict[self.urls_dict[self.current_url]]["position"] == 'GK':
             return
+
+        player_id = self.urls_dict[self.current_url]
+
         print("in get_stats")
         tables = pd.read_html(self.html)
         df = tables[2]        
@@ -139,16 +144,27 @@ class PlayerStatsScraper(a.AbstractScraper):
         for i in range(3, len(tables)):
             new_df = self.clean_df(tables[i]).copy()
             df = pd.concat([df,new_df[new_df.columns[6:]]], axis=1)
-        print("tables concatenated")
+        print("player's tables concatenated horizontally")
         print(df.head())
-        # add current player's df to stats_df
+
+        #weed out new players
+        if df.shape[1] < 100:
+            return
+        # add player_id
+        player_id = pd.Series([self.urls_dict[self.current_url] for _ in range(self.current_df.shape[0])])
+
+        # add current player's df to stats_df     
         if str(type(self.stats_df)) != "<class 'pandas.core.frame.DataFrame'>":
             print("first player")
             self.stats_df= df.copy()
             print(self.stats_df.head())
         else:
-            # print("columns equal:", self.stats_df.columns == df.columns)            
-            pd.concat([self.stats_df, df.copy()])
+            # print("columns equal:", self.stats_df.columns == df.columns)
+            self.current_df = df.copy()
+            print("stats_df", self.stats_df.index)            
+            print("df", df.index)            
+            self.stats_df = pd.concat([self.stats_df, df]).copy()
+            print("stats df shape", self.stats_df.shape)
 
     @staticmethod    
     def clean_df(df):

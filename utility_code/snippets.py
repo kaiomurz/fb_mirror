@@ -91,7 +91,7 @@ img = requests.get("https://fbref.com/req/202005121/images/headshots/d70ce98e_20
 ################## getting list of tables ##################
 
 url = 'https://fbref.com/en/players/e06683ca/Virgil-van-Dijk'
-tables = pd.read_html(url)
+tables = pd.read_html(url) #in app, pass self.html
 
 ################# table locations in tables #################
 
@@ -121,7 +121,6 @@ def clean_df(df):
     df.columns = new_columns
 
     # truncate df after list of seasons
-
     loc = 0
     for i, season in enumerate(df['Season']):
         if str(season).endswith('Seasons'):
