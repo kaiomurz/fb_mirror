@@ -1,11 +1,8 @@
-from lxml import etree
 import pandas as pd
-from pyparsing import col
 import requests
 from bs4 import BeautifulSoup
 
 from scrapers import abstract_scraper as a
-# from utility_code.snippets import clean_df
 
 
 class ClubURLsScraper(a.AbstractScraper):
