@@ -147,7 +147,7 @@ class PlayerStatsScraper(a.AbstractScraper):
             self.stats_df= df.copy()
             print(self.stats_df.head())
         else:
-            print("columns equal:", self.stats_df.columns == df.columns)            
+            # print("columns equal:", self.stats_df.columns == df.columns)            
             pd.concat([self.stats_df, df.copy()])
 
     @staticmethod    
