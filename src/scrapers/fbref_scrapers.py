@@ -1,5 +1,6 @@
 from lxml import etree
 import pandas as pd
+from pyparsing import col
 import requests
 from bs4 import BeautifulSoup
 
@@ -167,8 +168,11 @@ class PlayerStatsScraper(a.AbstractScraper):
             
             print("stats_df", self.stats_df.index)            
             print("current_df", self.current_df.index)            
-            # df3 = df3[~df3.index.duplicated(keep='first')]
-            self.stats_df = pd.concat([self.stats_df, self.current_df]).copy()
+            # self.current_df = self.current_df[~self.current_df.index.duplicated(keep='first')]
+            # pd.Series(range(self.stats_df.shape[0]+1, self.stats_df.shape[0]+1+self.current_df.shape[0]))
+            columns = list(set(list(self.stats_df.columns) + list(self.current_df.columns)))
+            self.stats_df = pd.concat([self.stats_df.copy(), self.current_df], ignore_index=True, sort=False).copy()
+            # self.stats_df = pd.concat([self.stats_df.copy(), self.current_df], columns = columns).copy()
             print("stats df shape", self.stats_df.shape)
 
     @staticmethod    
