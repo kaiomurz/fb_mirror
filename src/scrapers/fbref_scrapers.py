@@ -79,8 +79,12 @@ class PlayerStatsScraper(a.AbstractScraper):
         #     print("player key", player_key)
         # except:
         #     raise KeyError
-        self.personal_info_dict[player_key] = personal_info 
-        self.get_stats()
+        self.personal_info_dict[player_key] = personal_info
+
+        if self.personal_info_dict[self.urls_dict[self.current_url]]["position"] == 'GK':
+            return 
+        else:
+            self.get_stats()
         # print('pi dict', self.personal_info_dict)
 
     def get_personal_info(self):
@@ -129,8 +133,7 @@ class PlayerStatsScraper(a.AbstractScraper):
         
     def get_stats(self): 
         #check for goalies
-        if self.personal_info_dict[self.urls_dict[self.current_url]]["position"] == 'GK':
-            return
+        
 
         player_id = self.urls_dict[self.current_url]
 
@@ -150,20 +153,22 @@ class PlayerStatsScraper(a.AbstractScraper):
         #weed out new players
         if df.shape[1] < 100:
             return
+        self.current_df = df.copy()
         # add player_id
-        player_id = pd.Series([self.urls_dict[self.current_url] for _ in range(self.current_df.shape[0])])
+        self.current_df["player_id"] = pd.Series([self.urls_dict[self.current_url] for _ in range(self.current_df.shape[0])]).copy()
 
         # add current player's df to stats_df     
         if str(type(self.stats_df)) != "<class 'pandas.core.frame.DataFrame'>":
             print("first player")
-            self.stats_df= df.copy()
+            self.stats_df= self.current_df.copy()
             print(self.stats_df.head())
         else:
             # print("columns equal:", self.stats_df.columns == df.columns)
-            self.current_df = df.copy()
+            
             print("stats_df", self.stats_df.index)            
-            print("df", df.index)            
-            self.stats_df = pd.concat([self.stats_df, df]).copy()
+            print("current_df", self.current_df.index)            
+            # df3 = df3[~df3.index.duplicated(keep='first')]
+            self.stats_df = pd.concat([self.stats_df, self.current_df]).copy()
             print("stats df shape", self.stats_df.shape)
 
     @staticmethod    
