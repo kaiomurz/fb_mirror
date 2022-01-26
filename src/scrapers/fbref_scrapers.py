@@ -129,20 +129,26 @@ class PlayerStatsScraper(a.AbstractScraper):
         self.personal_info_df = pd.DataFrame.from_dict(self.personal_info_dict, orient='index')
 
         
-    def get_stats(self): 
-        #check for goalies
-        
-
+    def get_stats(self):         
         player_id = self.urls_dict[self.current_url]
 
         print("in get_stats")
         tables = pd.read_html(self.html)
-        df = tables[2]        
+
+        #reduce tables to only contain stats tables 
+        table_indices = []
+        for i, table in enumerate(tables):
+            if ( 'Unnamed: 0_level_0',  'Season') in table.columns:
+                table_indices.append(i)
+        tables = [tables[i] for i in  range(len(tables)) if i in table_indices]
+
+
+        df = tables[0]    
         # clean first table
         df = self.clean_df(df).copy()
         print("first table cleaned")
         #Concatenate rest of the tables
-        for i in range(3, len(tables)):
+        for i in range(1, len(tables)):
             new_df = self.clean_df(tables[i]).copy()
             df = pd.concat([df,new_df[new_df.columns[6:]]], axis=1)
         print("player's tables concatenated horizontally")
@@ -174,13 +180,14 @@ class PlayerStatsScraper(a.AbstractScraper):
 
     @staticmethod    
     def clean_df(df):
-        df = df.drop('Matches', axis=1, level=1) 
+        # df = df.drop('Matches', axis=1, level=1) 
 
-        #drop top level from general data column names
+        # drop top level from general data column names
         new_columns = list(df.columns[:6].droplevel()) + list(df.columns[6:]) 
         df.columns = new_columns
 
         # truncate df after list of seasons
+        print(df[df.columns[:5]].head())
         loc = 0
         for i, season in enumerate(df['Season']):
             if str(season).endswith('Seasons'):

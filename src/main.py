@@ -1,6 +1,9 @@
 from scrapers.fbref_scrapers import ClubURLsScraper, PlayerURLsScraper, PlayerStatsScraper
 import random
 
+
+#### Scrape FBRef ####
+# def scrape_fbref():
 club_urls_scraper = ClubURLsScraper()
 player_urls_scraper = PlayerURLsScraper()
 
@@ -19,3 +22,14 @@ pss.set_urls()
 pss.run()
 pss.create_personal_info_df()
 pss.get_stats()
+
+
+#### Scrape Wikipedia ####
+
+#### Main ####
+
+# def main():
+#     scrape_fbref()
+
+# if __name__ == "__main__":
+#     main()
