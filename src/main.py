@@ -32,10 +32,11 @@ import random
 # pass urls_dict to scraper and extract self.urls
 # crawl and collect content into dict player_id:content_dict
 # reinitialise content_dict for every player.
-
 wcs = WikiContentScraper()
+wcs.urls_dict = {'https://en.wikipedia.org/wiki//Fabinho_(footballer%2C_born_1993)':1, "https://en.wikipedia.org/wiki/Lionel_Messi":2}
+wcs.set_urls()
 wcs.run()
-wcs.extract_data()
+# wcs.extract_data()
 
 #### Main ####
 
