@@ -2,15 +2,13 @@ import re
 
 from scrapers import abstract_scraper as a
 
-class WikiContentScraper(a.AbstractScraper):
+class WikiContentScraper(a.AbstractScraper):       
     def __init__(self) -> None:
         self.urls = ["https://en.wikipedia.org/wiki/Lionel_Messi"]
         self.previous_is_p = False
         self.content = re.compile('(h[2-9])|p')
-        # heading = re.compile('(h[2-9])')
         self.header_order = ['h2','h3','h4','h5']
         self.content_set = set()
-        # header_dict = {}
         self.content_dict = {}
         self.header_text_dict = {}
         self.header_stack = []
@@ -20,7 +18,6 @@ class WikiContentScraper(a.AbstractScraper):
 
     def extract_data(self):
         self.body = self.soup.find("div", class_="mw-parser-output")
-        h2 = self.soup.find("h2") ### delete if not needed
 
         for c in self.body.children:
             if c.name is not None and \
@@ -69,3 +66,10 @@ class WikiContentScraper(a.AbstractScraper):
                     del self.header_text_dict[header]
                 except:
                     continue
+
+
+class WikiLinksRetriever(a.AbstractScraper):
+    # save player_id and wikipedia links
+    pass
+
+

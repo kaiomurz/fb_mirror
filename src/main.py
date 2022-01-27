@@ -21,15 +21,21 @@ import random
 # pss.urls_dict = urls_dict
 # pss.set_urls()
 # pss.run()
-# pss.create_personal_info_df()
-# pss.get_stats()
+# pss.create_personal_info_df() ####should this be in extract data?
+# pss.get_stats() ####should this be in extract data?
 
 
 #### Scrape Wikipedia ####
 
+#get names, full names, teams, player_id from postgres table or fbref scraper instance
+# use ddg api to get wikipedia links (put in dict link:player_id)
+# pass urls_dict to scraper and extract self.urls
+# crawl and collect content into dict player_id:content_dict
+# reinitialise content_dict for every player.
+
 wcs = WikiContentScraper()
 wcs.run()
-
+wcs.extract_data()
 
 #### Main ####
 
