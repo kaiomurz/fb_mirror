@@ -68,7 +68,7 @@ class PlayerStatsScraper(a.AbstractScraper):
     def extract_data(self):
         personal_info = self.get_personal_info()
         # print("in extract s")
-        print(personal_info)
+        # print(personal_info)
         # print("current url in ed", self.current_url)
         
         player_key = self.urls_dict[self.current_url]

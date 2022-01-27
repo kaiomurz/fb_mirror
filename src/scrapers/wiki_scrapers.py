@@ -1,5 +1,6 @@
 import re
-
+import requests
+from bs4 import BeautifulSoup
 from scrapers import abstract_scraper as a
 
 class WikiContentScraper(a.AbstractScraper):       
@@ -8,9 +9,9 @@ class WikiContentScraper(a.AbstractScraper):
         self.content_set = set()
         self.consolidated_dict = {}
         self.content_dict = {}
-        self.header_text_dict = {}
         self.header_stack = []
-        self.exclude_set = {"Contents", "See also", "Notes", "References", "External links", "Navigation menu"}
+        self.exclude_set = {"Contents", "See also", "Notes", "References", 
+        "External links", "Navigation menu", 'Further reading', 'Honours', 'Works cited','Career statistics'}
         self.previous_is_p = False
         self.content = re.compile('(h[2-9])|p')
         self.header_order = ['h2','h3','h4','h5']
@@ -20,14 +21,38 @@ class WikiContentScraper(a.AbstractScraper):
     def set_urls(self):
         self.urls = list(self.urls_dict.keys())
 
+    def run(self):#move to multithreading
+        #validate whether there's a URL        
+        print("in run")
+        for url in self.urls:
+            self.crawl(url)
+
+    def crawl(self, url):
+        print("in crawl", url)
+        self.current_url = url
+        self.html = requests.get(url).text
+        self.soup = BeautifulSoup(self.html, 'html.parser')
+        print("going to extract")
+        self.extract_data()
+
     def extract_data(self):
+        self.current_key = self.urls_dict[self.current_url]
+        
         self.get_wiki_content()
-        self.consolidated_dict[self.urls_dict[self.current_url]] = self.content_dict
-        print(f'{self.urls_dict[self.current_url]} - {self.current_url}: added' )
+        print(self.content_dict['opening'][:50])
+        print("current url and index", self.current_url, self.current_key)
+        self.consolidated_dict[self.current_key] = self.content_dict
+        print(f'{self.current_key} - {self.current_url}: added' )
+        print(self.consolidated_dict[self.current_key]['opening'][:50])
+        print("\n\n\n")
 
     def get_wiki_content(self):
-        self.body = self.soup.find("div", class_="mw-parser-output")
+        self.content_dict = {}
+        self.header_text_dict = {}
+        self.previous_is_p = False
 
+        print("url in get_wiki_content", self.current_url)
+        self.body = self.soup.find("div", class_="mw-parser-output")
         for c in self.body.children:
             if c.name is not None and \
                 c.text not in self.exclude_set and\
@@ -35,6 +60,8 @@ class WikiContentScraper(a.AbstractScraper):
                     if c.name[0] == 'h':
                         # if current header smaller than or equal to last header in header_stack
                         # remove lower order headers from header text dict
+                        if c.text == 'Career statistics':
+                            return
                         self.update_header_text_dict(c.name)
                         self.header_text_dict[c.name] = self.clean_header(c.text)
                         self.previous_is_p = False
@@ -48,6 +75,7 @@ class WikiContentScraper(a.AbstractScraper):
                         else:
                             # print(header_text_dict)
                             key = tuple(self.header_text_dict.values())
+                        print("key:",key)
                         self.add_text(key,c.text)
 
                         self.previous_is_p = True
@@ -56,6 +84,7 @@ class WikiContentScraper(a.AbstractScraper):
     def add_text(self, key, text):
         '''concatenate content text to existing content text at current text section of body'''
         if self.previous_is_p:
+            # print(f'content dict {self.content_dict}, text {text}, key {key}')
             self.content_dict[key] += "\n" + text
         else:
             self.content_dict[key] = text
@@ -94,7 +123,10 @@ def get_wikipedia_links(names_dict):
         if "footballer" not in response.text:
             wiki_link =  "No footballer reference"
         elif "footballer" in response_json["RelatedTopics"][0]["FirstURL"]:
-            wiki_link  = response_json["RelatedTopics"][0]["FirstURL"].replace("duckduckgo.com", "en.wikipedia.org/wiki/")
+            wiki_link  = response_json["RelatedTopics"][0]["FirstURL"]\
+                .replace("duckduckgo.com", "en.wikipedia.org/wiki")\
+                .replace("%2C", ",")
+            print(f'wiki link: {wiki_link}')
 
         elif "footballer" in response_html:
             abstract_url = response_json["AbstractURL"]
@@ -105,6 +137,6 @@ def get_wikipedia_links(names_dict):
         else:
             wiki_link =  "Unknown error"
 
-        wiki_urls_dict[id] = wiki_link
+        wiki_urls_dict[wiki_link] = id
     return wiki_urls_dict
 

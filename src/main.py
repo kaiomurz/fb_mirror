@@ -1,28 +1,28 @@
 from scrapers.fbref_scrapers import ClubURLsScraper, PlayerURLsScraper, PlayerStatsScraper
-from scrapers.wiki_scrapers import WikiContentScraper
+from scrapers.wiki_scrapers import WikiContentScraper, get_wikipedia_links
 import random
 
 
 #### Scrape FBRef ####
 # def scrape_fbref():
-# club_urls_scraper = ClubURLsScraper()
-# player_urls_scraper = PlayerURLsScraper()
+club_urls_scraper = ClubURLsScraper()
+player_urls_scraper = PlayerURLsScraper()
 
-# club_urls_scraper.run()
-# player_urls_scraper.urls = club_urls_scraper.result[:2]
-# # print(player_urls_scraper.urls)
-# player_urls_scraper.run()
-# # print(player_urls_scraper.result)
+club_urls_scraper.run()
+player_urls_scraper.urls = club_urls_scraper.result[:2]
+# print(player_urls_scraper.urls)
+player_urls_scraper.run()
+# print(player_urls_scraper.result)
 
-# keys = random.sample(list(player_urls_scraper.result.keys()), 3)
+keys = random.sample(list(player_urls_scraper.result.keys()), 3)
 
-# urls_dict = {key:player_urls_scraper.result[key] for key in keys}
-# pss = PlayerStatsScraper()
-# pss.urls_dict = urls_dict
-# pss.set_urls()
-# pss.run()
-# pss.create_personal_info_df() ####should this be in extract data?
-# pss.get_stats() ####should this be in extract data?
+urls_dict = {key:player_urls_scraper.result[key] for key in keys}
+pss = PlayerStatsScraper()
+pss.urls_dict = urls_dict
+pss.set_urls()
+pss.run()
+pss.create_personal_info_df() ####should this be in extract data?
+pss.get_stats() ####should this be in extract data?
 
 
 #### Scrape Wikipedia ####
@@ -33,8 +33,13 @@ import random
 # crawl and collect content into dict player_id:content_dict
 # reinitialise content_dict for every player.
 wcs = WikiContentScraper()
-wcs.urls_dict = {'https://en.wikipedia.org/wiki//Fabinho_(footballer%2C_born_1993)':1, "https://en.wikipedia.org/wiki/Lionel_Messi":2}
+# names_dict = {1:"Lionel Messi", 2:"Cristiano Ronaldo", 3:"Fabinho"}
+names_dict = {key:pss.personal_info_dict[key]['name'] for key in pss.personal_info_dict}
+wcs.urls_dict = get_wikipedia_links(names_dict)
+print("wcs urls dict:",wcs.urls_dict)
 wcs.set_urls()
+print("wcs urls:",wcs.urls)
+
 wcs.run()
 # wcs.extract_data()
 
