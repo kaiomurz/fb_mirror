@@ -37,7 +37,7 @@ class WikiContentScraper(a.AbstractScraper):
 
     def extract_data(self):
         self.current_key = self.urls_dict[self.current_url]
-        
+        # insert check to see if soup contains the a valid footballer page.
         self.get_wiki_content()
         print(self.content_dict['opening'][:50])
         print("current url and index", self.current_url, self.current_key)
@@ -116,7 +116,9 @@ def get_names_dict(personal_info_dict):
     return {id:personal_info_dict[id]['name'] for id in personal_info_dict.keys()}
 
 
-def get_wikipedia_links(names_dict):
+def get_wikipedia_links(names_dict): 
+    # fix to return only valid wiki links and log errors in some other
+    # data structure
     wiki_urls_dict = {}
     errors_ids = []
 
