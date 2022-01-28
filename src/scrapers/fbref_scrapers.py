@@ -6,13 +6,33 @@ from scrapers import abstract_scraper as a
 
 
 class ClubURLsScraper(a.AbstractScraper):
+    """
+    Scraper designed to fetch URLs of the 'Big 5' European teams from 
+    FBRef.com.
+
+    Methods inherited from AbstractScraper:
+    run():
+        creates ThreadPoolExecutor with list of URLs and calls crawl().
+    crawl(url):
+        fetches HTML, converts to soup, and calls extract_data().
+
+    Abstract methods in AbstractScraper written for this class:
+    extract_data(): 
+        parses the soup and extracts required links.
+    save_result(): abstractmethod
+        yet to be written
+
+    """
+
     def __init__(self) -> None:
-        print("Club URLs scraper")
         self.urls = ['https://fbref.com/en/comps/Big5/Big-5-European-Leagues-Stats']
         self.max_workers = 1            
         
     def extract_data(self):
-        print("extract data")        
+        """
+        parses the soup and extracts required links.
+        """
+
         table = self.soup.find('tbody')
         links = table.find_all('a')
         self.result = ["https://fbref.com" + link['href'] for link in links if 'squads' in link['href']]
@@ -60,15 +80,7 @@ class PlayerStatsScraper(a.AbstractScraper):
    
     def set_urls(self):
         self.urls = list(self.urls_dict.keys())
-
-    def crawl(self, url):
-        # print("in crawl", url)
-        self.current_url = url
-        # print("current url", self.current_url)
-        self.html = requests.get(self.current_url).text
-        self.soup = BeautifulSoup(self.html, 'html.parser')
-        # print("going to extract")
-        self.extract_data()
+   
 
     def extract_data(self):
         personal_info = self.get_personal_info()

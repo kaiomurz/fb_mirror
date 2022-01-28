@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import pickle
 import concurrent.futures
 import requests
 from bs4 import BeautifulSoup
