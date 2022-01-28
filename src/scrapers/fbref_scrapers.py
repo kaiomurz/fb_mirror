@@ -16,7 +16,9 @@ class ClubURLsScraper(a.AbstractScraper):
         table = self.soup.find('tbody')
         links = table.find_all('a')
         self.result = ["https://fbref.com" + link['href'] for link in links if 'squads' in link['href']]
-       
+
+    def save_result(self, file_name):
+        pass
   
 
 class PlayerURLsScraper(a.AbstractScraper):
@@ -38,6 +40,9 @@ class PlayerURLsScraper(a.AbstractScraper):
         for url in player_urls:
             self.player_id_counter += 1
             self.result[url] = self.player_id_counter
+
+    def save_result(self, file_name):
+        pass
 
 
 class PlayerStatsScraper(a.AbstractScraper):
@@ -196,7 +201,8 @@ class PlayerStatsScraper(a.AbstractScraper):
 
         return df.head(loc)
 
-
+    def save_result(self, file_name):
+        pass
         
 
 

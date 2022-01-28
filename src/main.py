@@ -32,13 +32,7 @@ pss.get_stats() ####should this be in extract data?
 # pass urls_dict to scraper and extract self.urls
 # crawl and collect content into dict player_id:content_dict
 # reinitialise content_dict for every player.
-wcs = WikiContentScraper()
-# names_dict = {1:"Lionel Messi", 2:"Cristiano Ronaldo", 3:"Fabinho"}
-names_dict = {key:pss.personal_info_dict[key]['name'] for key in pss.personal_info_dict}
-wcs.urls_dict = get_wikipedia_links(names_dict)
-print("wcs urls dict:",wcs.urls_dict)
-wcs.set_urls()
-print("wcs urls:",wcs.urls)
+
 
 wcs.run()
 # wcs.extract_data()

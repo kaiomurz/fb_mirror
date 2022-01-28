@@ -21,11 +21,11 @@ class WikiContentScraper(a.AbstractScraper):
     def set_urls(self):
         self.urls = list(self.urls_dict.keys())
 
-    def run(self):#move to multithreading
-        #validate whether there's a URL        
-        print("in run")
-        for url in self.urls:
-            self.crawl(url)
+    # def run(self):#move to multithreading
+    #     #validate whether there's a URL        
+    #     print("in run")
+    #     for url in self.urls:
+    #         self.crawl(url)
 
     def crawl(self, url):
         print("in crawl", url)
@@ -105,11 +105,20 @@ class WikiContentScraper(a.AbstractScraper):
                 except:
                     continue
 
+    def save_result(self, file_name):
+        pass
+
+
+
+
+
 def get_names_dict(personal_info_dict):
     return {id:personal_info_dict[id]['name'] for id in personal_info_dict.keys()}
 
+
 def get_wikipedia_links(names_dict):
     wiki_urls_dict = {}
+    errors_ids = []
 
     for id in names_dict:
         name = names_dict[id]
@@ -121,7 +130,7 @@ def get_wikipedia_links(names_dict):
         # player_id = 10
 
         if "footballer" not in response.text:
-            wiki_link =  "No footballer reference"
+            errors_ids.append(id)            
         elif "footballer" in response_json["RelatedTopics"][0]["FirstURL"]:
             wiki_link  = response_json["RelatedTopics"][0]["FirstURL"]\
                 .replace("duckduckgo.com", "en.wikipedia.org/wiki")\
@@ -138,5 +147,7 @@ def get_wikipedia_links(names_dict):
             wiki_link =  "Unknown error"
 
         wiki_urls_dict[wiki_link] = id
-    return wiki_urls_dict
+    return wiki_urls_dict #, errors_ids
+
+    
 
