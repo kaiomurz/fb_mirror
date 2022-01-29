@@ -1,3 +1,4 @@
+from ast import Not
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -5,13 +6,14 @@ from scrapers import abstract_scraper as a
 
 class WikiContentScraper(a.AbstractScraper):       
     def __init__(self) -> None:
-        self.urls_dict = None
+        self.urls_dict = NotImplemented
         self.content_set = set()
         self.consolidated_dict = {}
         self.content_dict = {}
         self.header_stack = []
-        self.exclude_set = {"Contents", "See also", "Notes", "References", 
-        "External links", "Navigation menu", 'Further reading', 'Honours', 'Works cited','Career statistics'}
+        self.exclude_set = {"Contents", "See also", "Notes", "References",\
+                    "External links", "Navigation menu", 'Further reading',\
+                    'Honours', 'Works cited','Career statistics'}
         self.previous_is_p = False
         self.content = re.compile('(h[2-9])|p')
         self.header_order = ['h2','h3','h4','h5']
@@ -32,12 +34,11 @@ class WikiContentScraper(a.AbstractScraper):
         self.current_url = url
         self.html = requests.get(url).text
         self.soup = BeautifulSoup(self.html, 'html.parser')
-        print("going to extract")
+        # insert check to see if soup contains the a valid footballer page.
         self.extract_data()
 
     def extract_data(self):
         self.current_key = self.urls_dict[self.current_url]
-        # insert check to see if soup contains the a valid footballer page.
         self.get_wiki_content()
         print(self.content_dict['opening'][:50])
         print("current url and index", self.current_url, self.current_key)
@@ -110,17 +111,28 @@ class WikiContentScraper(a.AbstractScraper):
 
 
 
+def get_wikipedia_links(personal_info_dict:dict) -> dict:        
+    """
+    This function takes a dictionary in the format of a .personal_info_dict
+    attribute of PlayerDataScraperClass and returns a dictionary with 
+    assumed wikipedia links as keys and ids as values.
 
+    Parameters
+    ----------
+    personal_info_dict: dict
+        dictionary in the format of a .personal_info_dict attribute
+        of PlayerDataScraperClass. A .personal_info_dict is a dictionary
+        with ids as keys and dictionaries as values. The value 
+        dictionaries should contain a key "name".    
 
-def get_names_dict(personal_info_dict):
-    return {id:personal_info_dict[id]['name'] for id in personal_info_dict.keys()}
-
-
-def get_wikipedia_links(names_dict): 
+    """       
+    
     # fix to return only valid wiki links and log errors in some other
     # data structure
+
+    names_dict = {id:personal_info_dict[id]['name'] for id in personal_info_dict.keys()}
     wiki_urls_dict = {}
-    errors_ids = []
+    errors_dict = {}
 
     for id in names_dict:
         name = names_dict[id]
@@ -132,24 +144,26 @@ def get_wikipedia_links(names_dict):
         # player_id = 10
 
         if "footballer" not in response.text:
-            errors_ids.append(id)            
+            errors_dict[names_dict[id]] = "no \"footballer\" in response"
+            continue
         elif "footballer" in response_json["RelatedTopics"][0]["FirstURL"]:
             wiki_link  = response_json["RelatedTopics"][0]["FirstURL"]\
                 .replace("duckduckgo.com", "en.wikipedia.org/wiki")\
                 .replace("%2C", ",")
-            print(f'wiki link: {wiki_link}')
 
         elif "footballer" in response_html:
             abstract_url = response_json["AbstractURL"]
             if "wikipedia" in abstract_url:
                 wiki_link =  abstract_url
             else:
-                wiki_link =  "No wiki link"
+                errors_dict[names_dict[id]] = "No wiki link"
+                continue
         else:
-            wiki_link =  "Unknown error"
+            errors_dict[names_dict[id]] = "Unknown error"
 
         wiki_urls_dict[wiki_link] = id
-    return wiki_urls_dict #, errors_ids
+
+    return wiki_urls_dict, errors_dict
 
     
 

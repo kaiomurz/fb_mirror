@@ -56,10 +56,10 @@ class AbstractScraper(ABC):
         """
         print("abstract scraper")
         self.urls = []
-        self.current_url = None
-        self.html = None
-        self.soup = None
-        self.result = None
+        self.current_url = NotImplemented
+        self.html = NotImplemented
+        self.soup = NotImplemented
+        self.result = NotImplemented
         self.max_workers = 3
 
     def run(self) -> None:

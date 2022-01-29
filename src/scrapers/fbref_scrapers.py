@@ -1,3 +1,4 @@
+from ast import Not
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -82,32 +83,50 @@ class PlayerDataScraper(a.AbstractScraper):
     Scraper designed to extract from player's pages
     - personal info and store in dataframe (one row per player)
     - stats tables and store in dataframe (one row per (player,season))
+
+    Attributes specific to PlayerDataScraper
+    ----------------------------------------
+
     
     Abstract methods in AbstractScraper written for this class:
     -----------------------------------------------------------
     extract_data(): 
-        calls get_personal_info() and get_stats()
+        - call get_personal_info() and store dict returned in 
+          self.personal_info_dict()
+        - call get_stats()
+        
     save_result(): abstractmethod
         yet to be written
 
-    Other methods
+    Other methods specific to PlayerDataScraper
     -------------
     get_personal_info(self)
-        
+        extract 
+            - name
+            - birth date
+            - height
+            - weight            
+            - position
+            - footedness
+            - club
+            - twitter handle
+        from player page and return as dict
+
     create_personal_info_df(self)
+
     get_stats(self)
+
     clean_df(df)
 
     """
 
     def __init__(self) -> None:
-        print("Player Stats scraper")        
-        self.urls_dict = None
+        self.urls_dict = None ### {}?
         self.max_workers = 1
-        self.current_url = None
+        self.current_url = NotImplemented
         self.personal_info_dict = {}
-        self.personal_info_df = None
-        self.stats_df = "Empty"
+        self.personal_info_df = NotImplemented
+        self.stats_df = "Empty" # NotImplemented? also change in if statement
         self.result = {}# dict keys are "personal info" and "stats"
         
         
@@ -126,7 +145,7 @@ class PlayerDataScraper(a.AbstractScraper):
         #modify to call appropriate function for goalkeeper data extraction 
         if self.personal_info_dict[self.urls_dict[self.current_url]]["position"] == 'GK':
             return 
-        else:
+        else: #get return df and add to stats_df
             self.get_stats()
         # print('pi dict', self.personal_info_dict)
 
