@@ -143,23 +143,31 @@ def get_wikipedia_links(personal_info_dict:dict) -> dict:
         response_html = response.text
         # player_id = 10
 
-        if "footballer" not in response.text:
+        if "footballer" not in response_html:
             errors_dict[names_dict[id]] = "no \"footballer\" in response"
             continue
-        elif "footballer" in response_json["RelatedTopics"][0]["FirstURL"]:
+
+        print("url:", url)
+        print("xxx:",response_json["RelatedTopics"][0]["FirstURL"])
+
+        if "footballer" in response_json["RelatedTopics"][0]["FirstURL"]\
+        and "footballers" not in response_json["RelatedTopics"][0]["FirstURL"]:
+            print("triggered")
             wiki_link  = response_json["RelatedTopics"][0]["FirstURL"]\
                 .replace("duckduckgo.com", "en.wikipedia.org/wiki")\
                 .replace("%2C", ",")
-
-        elif "footballer" in response_html:
+                  
+        # elif "footballer" in response_html:
+        else:
             abstract_url = response_json["AbstractURL"]
             if "wikipedia" in abstract_url:
                 wiki_link =  abstract_url
             else:
                 errors_dict[names_dict[id]] = "No wiki link"
-                continue
-        else:
-            errors_dict[names_dict[id]] = "Unknown error"
+            
+        # else:
+        #     errors_dict[names_dict[id]] = "no \"footballer\" in response"
+        #     # errors_dict[names_dict[id]] = "Unknown error"
 
         wiki_urls_dict[wiki_link] = id
 
