@@ -78,7 +78,7 @@ class PlayerURLsScraper(a.AbstractScraper):
         pass
 
 
-class PlayerDataScraper(a.AbstractScraper):
+class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not yet reviewed.
     """
     Scraper designed to extract from player's pages
     - personal info and store in dataframe (one row per player)
@@ -86,7 +86,7 @@ class PlayerDataScraper(a.AbstractScraper):
 
     Attributes specific to PlayerDataScraper
     ----------------------------------------
-
+    
     
     Abstract methods in AbstractScraper written for this class:
     -----------------------------------------------------------
