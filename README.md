@@ -34,9 +34,9 @@ There are three different scraper classes in ```fbref_scrapers.py```. These incl
 
 The data thus retrieved is stored in two dataframes, one for personal information (one row per player) and one that accumulates all the statistics on the player's page (one row for every season for every player). Both the tables have a ```player_id``` column that could be used to join them for SQL queries. 
 
+```main.py``` coordinates the entire entire pipeline. 
 
 
-```main.py``` coordinates the entire entire pipeline.
 
 
 ## How to run the project
@@ -49,9 +49,7 @@ The results of ```wcs``` are a bit harder to parse at this stage. ```wcs.content
 
 For example if the last processed player was Neymar Jr of of Paris St. Germain, ```content_dict.keys()``` would return  
 
-``` dict_keys(['opening', ('Early life',), ('Club career', 'Santos', 'Youth'), ('Club career', 'Santos', '2009: Debut season'), ('Club career', 'Santos', '2010: Campeonato Paulista success'), ('Club career', 'Santos', '2011: Puskás Award'), ('Club career', 'Santos', "2012: South America's best player"), ...   
-  ...('International career',), ('International career', '2011 South American Youth Championship and Copa América'),...   
-  ... ('Outside football', 'Personal life'), ('Outside football', 'Wealth and sponsorships'), ('Outside football', 'Media'), ('Outside football', 'Music'), ('Outside football', 'Club'), ('Outside football', 'International'), ('Outside football', 'Individual')]) ```  
+``` dict_keys(['opening', ('Early life',), ('Club career', 'Santos', 'Youth'), ('Club career', 'Santos', '2009: Debut season'), ('Club career', 'Santos', '2010: Campeonato Paulista success'), ('Club career', 'Santos', '2011: Puskás Award'), ('Club career', 'Santos', "2012: South America's best player"), ('International career',), ('International career', '2011 South American Youth Championship and Copa América'),('Outside football', 'Personal life'), ('Outside football', 'Wealth and sponsorships'), ('Outside football', 'Media'), ('Outside football', 'Music'), ('Outside football', 'Club'), ('Outside football', 'International'), ('Outside football', 'Individual')]) ```  
 
 This represents the structure of the [Wikipedia page](https://en.wikipedia.org/wiki/Neymar) for that particular player. Accessing ```wcs.content_dict[('International career', '2011 South American Youth Championship and Copa América')]``` would return the content:  
 
