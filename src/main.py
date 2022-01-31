@@ -1,4 +1,3 @@
-from tensorboard import errors
 from scrapers.fbref_scrapers import ClubURLsScraper, PlayerURLsScraper, PlayerDataScraper
 from scrapers.wiki_scrapers import WikiContentScraper, get_wikipedia_links
 import random
@@ -9,19 +8,17 @@ club_urls_scraper = ClubURLsScraper()
 player_urls_scraper = PlayerURLsScraper()
 
 club_urls_scraper.run()
-player_urls_scraper.urls = club_urls_scraper.result[:2]
+player_urls_scraper.urls = club_urls_scraper.result[:5]### modify to do complete search
 # print(player_urls_scraper.urls)
 player_urls_scraper.run()
 # print(player_urls_scraper.result)
 
-keys = random.sample(list(player_urls_scraper.result.keys()), 3)
+keys = random.sample(list(player_urls_scraper.result.keys()), 5) ### modify to do complete search
 
 urls_dict = {key:player_urls_scraper.result[key] for key in keys}
 pds = PlayerDataScraper()
 pds.urls_dict = urls_dict
-pds.set_urls()
 pds.run()
-pds.create_personal_info_df() ####should this be in extract data?
 pds.get_stats() ####should this be in extract data?
 
 
@@ -42,11 +39,11 @@ test_info_dict = {
 wcs = WikiContentScraper()
 wcs.urls_dict, errors = get_wikipedia_links(pds.personal_info_dict)
 # wcs.urls_dict, errors = get_wikipedia_links(test_info_dict)
-print("urls", wcs.urls_dict)
-print("errors", errors)
+print("errors from get_wikipedia_links", errors)
 wcs.set_urls()
 wcs.run()
-wcs.extract_data()
+print("bad links", wcs.bad_links)
+# wcs.extract_data()
 
 #### Main ####
 

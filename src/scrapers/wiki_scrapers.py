@@ -13,6 +13,8 @@ class WikiContentScraper(a.AbstractScraper):
     ----------------------------------------
     urls_dict: dict
         dictionary with urls as keys and ids as values.
+    current_url: str
+        url whose soup is being currently processed
     content_set: set
         yet to be implemented.
     consolidated_dict: dict
@@ -93,7 +95,7 @@ class WikiContentScraper(a.AbstractScraper):
         self.header_stack = []
         self.exclude_set = {"Contents", "See also", "Notes", "References",\
                     "External links", "Navigation menu", 'Further reading',\
-                    'Honours', 'Works cited','Career statistics'}
+                    'Honours', 'Works cited','Career statistics', 'External links'}
         self.content = re.compile('(h[2-9])|p')
         self.header_order = ['h2','h3','h4','h5']
         self.bad_links = {}
@@ -169,7 +171,7 @@ class WikiContentScraper(a.AbstractScraper):
 
                         self.previous_is_p = True
 
-    def add_text(self, key:Tuple(str), text:str):
+    def add_text(self, key:Tuple[str], text:str):
         """
         concatenate content text to existing content text at current text section of body
         
@@ -223,7 +225,7 @@ class WikiContentScraper(a.AbstractScraper):
         pass
 
 
-def get_wikipedia_links(personal_info_dict:dict) -> Tuple[dict]:        
+def get_wikipedia_links(personal_info_dict:dict) -> Tuple[dict,dict]:        
     """
     This function takes a dictionary in the format of a .personal_info_dict
     attribute of PlayerDataScraperClass and returns a dictionary with 
