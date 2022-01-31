@@ -51,7 +51,9 @@ For example if the last processed player was Neymar Jr of of Paris St. Germain, 
 
 ``` dict_keys(['opening', ('Early life',), ('Club career', 'Santos', 'Youth'), ('Club career', 'Santos', '2009: Debut season'), ('Club career', 'Santos', '2010: Campeonato Paulista success'), ('Club career', 'Santos', '2011: Puskás Award'), ('Club career', 'Santos', "2012: South America's best player"), ('International career',), ('International career', '2011 South American Youth Championship and Copa América'),('Outside football', 'Personal life'), ('Outside football', 'Wealth and sponsorships'), ('Outside football', 'Media'), ('Outside football', 'Music'), ('Outside football', 'Club'), ('Outside football', 'International'), ('Outside football', 'Individual')]) ```  
 
-This represents the structure of the [Wikipedia page](https://en.wikipedia.org/wiki/Neymar) for that particular player. Accessing ```wcs.content_dict[('International career', '2011 South American Youth Championship and Copa América')]``` would return the content:  
+This represents the structure of the [Wikipedia page](https://en.wikipedia.org/wiki/Neymar) for that particular player. (This output has been truncated for the purposes of presentation.)
+
+Accessing ```wcs.content_dict[('International career', '2011 South American Youth Championship and Copa América')]``` would return the content:  
 
 
 ```"Neymar was the leading goal scorer of the 2011 South American Youth Championship with nine goals, including two in the final, in Brazil's 6–0 win against Uruguay.[193] He also took part at the 2011 Copa América in Argentina, where he scored two goals in the first-round game against Ecuador. He was selected 'Man of the Match' in Brazil's first match against Venezuela, which ended a 1–1 draw. Brazil were eliminated in the quarter-finals in a penalty shoot-out against Paraguay (2–2 a.e.t.), with Neymar being substituted in the 80th minute.[194]\n"```
