@@ -29,23 +29,25 @@ for key in test_info_dict:
     name = test_info_dict[key]["name"]
     print(name)
     url = "https://www.espn.co.uk/football/"
-    playwright = sync_playwright().start()
-    browser = playwright.chromium.launch(headless=True)
-    page = browser.new_page()
-    page.goto(url)
 
-    page.locator("text=Continue without Accepting").click()
-    page.locator("id=global-search-trigger").click()
-    page.locator("id=global-search-input").fill(name)
-    print("name filled")
-    # # page.wait_for_timeout(10000)
-    page.locator("//html/body/div[5]/div[2]/header/div[2]/ul/li[1]/div/div[1]/input[2]").click()
+    with sync_playwright() as playwright:
+        # playwright = sync_playwright().start()
+        browser = playwright.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(url)
 
-    page.wait_for_timeout(1000)
-    html = page.content()
+        page.locator("text=Continue without Accepting").click()
+        page.locator("id=global-search-trigger").click()
+        page.locator("id=global-search-input").fill(name)
+        print("name filled")
+        # # page.wait_for_timeout(10000)
+        page.locator("//html/body/div[5]/div[2]/header/div[2]/ul/li[1]/div/div[1]/input[2]").click()
 
-    browser.close()
-    playwright.stop()
+        page.wait_for_timeout(1000)
+        html = page.content()
+
+        browser.close()
+    # playwright.stop()
     soup = BeautifulSoup(html, 'html.parser')
 
 
