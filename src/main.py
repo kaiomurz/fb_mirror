@@ -1,6 +1,9 @@
 from scrapers.fbref_scrapers import ClubURLsScraper, PlayerURLsScraper, PlayerDataScraper
 from scrapers.wiki_scrapers import WikiContentScraper, get_wikipedia_links
+from scrapers.espn_scraper import ESPNScraper
 import random
+
+from src.scrapers import espn_scraper
 
 
 #### Scrape FBRef ####
@@ -44,6 +47,14 @@ wcs.set_urls()
 wcs.run()
 print("bad links", wcs.bad_links)
 # wcs.extract_data()
+
+
+
+#### Scrape ESPN ####
+
+
+
+
 
 #### Main ####
 

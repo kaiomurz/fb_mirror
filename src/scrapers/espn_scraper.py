@@ -9,56 +9,65 @@ class ESPNScraper(a.AbstractScraper):
     def __init__(self) -> None:
         self.names_dict = NotImplemented
         self.news_dict = {}
-        self.max_workers = 3
+        self.max_workers = 1
         self.url = "https://www.espn.co.uk/football/"
     
     def run(self):
+        print("in run")
         keys = self.names_dict.keys()
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             executor.map(self.crawl, keys)
-    
+
+        # for key in keys:
+        #     self.crawl(key)
+
     def crawl(self, key: int) -> None:
+        print("in crawl", self.names_dict[key])
+
         self.current_key = key
-        name = self.names_dict[self.current_key]
-        self.get_soup(name)
+        self.name = self.names_dict[self.current_key]["name"]
+        print("name assigned", self.name)
+        self.get_soup()
         self.extract_data()
 
-    def get_soup(self,name):
-                
+    def get_soup(self):
+        print("in get soup", self.name)
         with sync_playwright() as playwright:
-            # playwright = sync_playwright().start()
-            browser = playwright.chromium.launch(headless=True)
+            browser = playwright.chromium.launch(headless=False) #change to True
             page = browser.new_page()
             page.goto(self.url)
 
             page.locator("text=Continue without Accepting").click()
             page.locator("id=global-search-trigger").click()
-            page.locator("id=global-search-input").fill(name)
+            page.locator("id=global-search-input").fill(self.name)
             print("name filled")
             # # page.wait_for_timeout(10000)
             page.locator("//html/body/div[5]/div[2]/header/div[2]/ul/li[1]/div/div[1]/input[2]").click()
 
-            page.wait_for_timeout(1000)
+            page.wait_for_timeout(5000)
             self.html = page.content()
             self.soup = BeautifulSoup(self.html, 'html.parser')
 
             browser.close()
     
     def extract_data(self):
+        print("in extract data", self.name)
+
         news_divs = self.soup.find_all("li", class_="article__Results__Item")
-        news_list = []
+        self.news_list = []
         for div in news_divs:
             text = div.text
             ellipsis_loc = text.find("…")
             text = text[:ellipsis_loc]
-            news_list.append((text,div.find('a')['href']))
+            self.news_list.append((text,div.find('a')['href']))
             # print(div.text)
             link = div.find('a')
             # print(link['href'])
-        self.news_dict[self.current_key] = news_list
+        print(self.news_dict)
+        self.news_dict[self.current_key] = self.news_list
 
     def save_result(self, file_name):
         pass
-    
+
     def get_names(self):
         pass
