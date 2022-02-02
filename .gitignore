@@ -129,7 +129,8 @@ dmypy.json
 .pyre/
 
 # Test image files
-/fbscraper/fbscraper/other_scripts/test_images/
+
+/src/test_images/
 
 # CSV files 
 *.csv

@@ -1,3 +1,4 @@
+import shutil
 from typing import Tuple
 import os
 import re
@@ -231,12 +232,25 @@ class WikiContentScraper(a.AbstractScraper):
         im_count = 1
         print(len(img_list), "images found")
         if len(img_list) > 0:
-            for img in img_list:                
-                # if "/thumb/" in img['src'] and "svg" not in img["src"]:
-                url = "https:"+img["src"]
-                file_name = "test_images/" + str(im_count)
-                self.get_and_save_image(url, file_name)
-                im_count+=1
+            for i, img in enumerate(img_list):
+                print(i, img['src'])                
+                if "/thumb/" in img['src'] and "svg" not in img["src"]:
+                    url = "https:"+img["src"]
+                    file_name = "test_images/" + str(self.current_key) +  str(im_count) #"test_images/" + "/" +
+                    print(file_name)
+                    self.get_and_save_image(url, file_name)
+                    im_count+=1
+
+    @staticmethod
+    def get_and_save_image(img_url, file_name):
+        print("in get and save")
+        img = requests.get(img_url, stream=True)
+        print("image retrieved", img)
+        print("file name outside save", file_name)
+        with open(file_name, "wb") as f:
+            print("saving file", file_name)
+            img.raw.decode_content = True
+            shutil.copyfileobj(img.raw, f)
 
     def save_result(self, file_name):
         pass

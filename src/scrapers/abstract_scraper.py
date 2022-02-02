@@ -100,10 +100,10 @@ class AbstractScraper(ABC):
         """    
         pass
 
-    @staticmethod
-    def get_and_save_image(img_url, file_name):
-        img = requests.get(img_url, stream=True)
-        with open(file_name, "wb") as f:
-            img.raw.decode_content = True
-            shutil.copyfileobj(img.raw, f)
+    # @staticmethod
+    # def get_and_save_image(img_url, file_name):
+    #     img = requests.get(img_url, stream=True)
+    #     with open(file_name, "wb") as f:
+    #         img.raw.decode_content = True
+    #         shutil.copyfileobj(img.raw, f)
 
