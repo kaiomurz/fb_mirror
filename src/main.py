@@ -3,7 +3,6 @@ from scrapers.wiki_scrapers import WikiContentScraper, get_wikipedia_links
 from scrapers.espn_scraper import ESPNScraper
 import random
 
-from src.scrapers import espn_scraper
 
 
 #### Scrape FBRef ####
@@ -51,7 +50,10 @@ print("bad links", wcs.bad_links)
 
 
 #### Scrape ESPN ####
-
+esc = ESPNScraper()
+# esc.names_dict = test_info_dict
+esc.names_dict = pds.personal_info_dict
+esc.run()
 
 
 

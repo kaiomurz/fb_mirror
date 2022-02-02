@@ -33,7 +33,7 @@ class ESPNScraper(a.AbstractScraper):
     def get_soup(self):
         print("in get soup", self.name)
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch(headless=False) #change to True
+            browser = playwright.chromium.launch(headless=True) #change to True
             page = browser.new_page()
             page.goto(self.url)
 
