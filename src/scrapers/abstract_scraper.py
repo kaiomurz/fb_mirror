@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import concurrent.futures
 import requests
 from bs4 import BeautifulSoup
-
+import shutil
 
 class AbstractScraper(ABC):
     """
@@ -97,8 +97,13 @@ class AbstractScraper(ABC):
         saves result in file type specific to task.
 
         
-        """
-
+        """    
         pass
 
+    @staticmethod
+    def get_and_save_image(img_url, file_name):
+        img = requests.get(img_url, stream=True)
+        with open(file_name, "wb") as f:
+            img.raw.decode_content = True
+            shutil.copyfileobj(img.raw, f)
 

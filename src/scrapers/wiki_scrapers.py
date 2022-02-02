@@ -1,4 +1,5 @@
 from typing import Tuple
+import os
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -126,6 +127,8 @@ class WikiContentScraper(a.AbstractScraper):
             self.extract_data()
         else:
             self.bad_links[self.current_key] = self.current_url
+        self.scrape_images()
+        
 
     def extract_data(self):
         """
@@ -166,7 +169,7 @@ class WikiContentScraper(a.AbstractScraper):
                             key = 'opening'
                         else:
                             key = tuple(self.header_text_dict.values())
-                        print("key:",key)
+                        # print("key:",key)
                         self.add_text(key,c.text)
 
                         self.previous_is_p = True
@@ -220,6 +223,20 @@ class WikiContentScraper(a.AbstractScraper):
                 del self.header_text_dict[header]
             except:
                 continue
+
+    def scrape_images(self):
+        print("in scrape images")
+        img_list = self.soup.find_all("img")
+
+        im_count = 1
+        print(len(img_list), "images found")
+        if len(img_list) > 0:
+            for img in img_list:                
+                # if "/thumb/" in img['src'] and "svg" not in img["src"]:
+                url = "https:"+img["src"]
+                file_name = "test_images/" + str(im_count)
+                self.get_and_save_image(url, file_name)
+                im_count+=1
 
     def save_result(self, file_name):
         pass
