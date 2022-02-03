@@ -152,9 +152,9 @@ class WikiContentScraper(a.AbstractScraper):
         print('in extract before', self.current_key)
         self.get_wiki_content()
         self.new_content_dict = WikiContentScraper.structure_as_dict(self.content_dict.copy())
-        print(self.new_content_dict.keys())
+        # print(self.new_content_dict.keys())
         self.consolidated_dict[self.current_key] = self.new_content_dict
-        print(self.consolidated_dict[self.current_key].keys())
+        # print(self.consolidated_dict[self.current_key].keys())
         # self.consolidated_dict[self.current_key] = self.content_dict
 
         print('in extract after', self.current_key)#, self.consolidated_dict)
@@ -268,25 +268,36 @@ class WikiContentScraper(a.AbstractScraper):
         # for item in new_content_list:
             # print(item)    
         #########################################################
-
+        # new_content_list = new_content_list[-5:]#REMOVE!!!
         new_content_dict= new_content_list.pop()
-        print(new_content_dict.keys())
+        # print(new_content_dict.keys())
         # print(new_content_dict, "/n/n")
         for item in new_content_list:
             current_key  = list(item.keys())[0]
             d1 = new_content_dict.copy()
             # print('current key', current_key)
             if current_key  in new_content_dict:
-                # print(True)
+                print(True)
+                temp = new_content_dict.copy()
+                print("before", new_content_dict.keys())
                 new_content_dict = WikiContentScraper.merge(d1, item) #[current_key]
+                print("after", new_content_dict.keys())
+                if len(new_content_dict) < len(temp):
+                    new_content_dict = temp
+
             else:
+                print(False)
                 new_content_dict.update(item)
-            print(new_content_dict.keys())
+            # print("nc keys", new_content_dict.keys())
 
         return new_content_dict
     
     @staticmethod
     def merge(a, b):#change variable names
+        # print("in merge")
+        # print(f'a:{len(a)}, b:{len(b)}')        
+        # print('test')
+        # print(f'a:{a.keys()}, b:{b.keys()}')
         merged = {}
         if len(a) > 0 and len(b) > 0:
             a_keys = list(a.keys())
