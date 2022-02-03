@@ -1,7 +1,11 @@
+from operator import ne
 import shutil
+import json
 from typing import Tuple
 import os
 import re
+import concurrent.futures
+
 import requests
 from bs4 import BeautifulSoup
 from scrapers import abstract_scraper as a
@@ -106,6 +110,15 @@ class WikiContentScraper(a.AbstractScraper):
     def set_urls(self):
         self.urls = list(self.urls_dict.keys())
 
+    def run(self) -> None:
+        """
+        creates ThreadPoolExecutor with list of URLs and calls crawl().
+        """
+        #validate whether there's a URL        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor: 
+            executor.map(self.crawl, self.urls)
+        # self.consolidated_json = json.dumps(self.consolidated_dict, indent = 4)
+
     def crawl(self, url: str):
         """
         Retrieves html from url passed from run(). 
@@ -125,19 +138,26 @@ class WikiContentScraper(a.AbstractScraper):
         self.html = requests.get(url).text
         self.soup = BeautifulSoup(self.html, 'html.parser')
         if "Club career" in self.html:
+            print('to extract data', self.current_url)
             self.extract_data()
         else:
             self.bad_links[self.current_key] = self.current_url
-        self.scrape_images()
+        # self.scrape_images()
         
 
     def extract_data(self):
         """
         Call get_wiki_content and assign resulting  content_dict to consolidated_dict.
         """
-        
+        print('in extract before', self.current_key)
         self.get_wiki_content()
-        self.consolidated_dict[self.current_key] = self.content_dict
+        self.new_content_dict = WikiContentScraper.structure_as_dict(self.content_dict.copy())
+        print(self.new_content_dict.keys())
+        self.consolidated_dict[self.current_key] = self.new_content_dict
+        print(self.consolidated_dict[self.current_key].keys())
+        # self.consolidated_dict[self.current_key] = self.content_dict
+
+        print('in extract after', self.current_key)#, self.consolidated_dict)
 
     def get_wiki_content(self):
         """
@@ -224,6 +244,70 @@ class WikiContentScraper(a.AbstractScraper):
                 del self.header_text_dict[header]
             except:
                 continue
+
+
+    @staticmethod
+    def structure_as_dict(content_dict):
+        cd_keys = list(content_dict.keys())
+        # print(cd_keys)
+        new_content_list = []
+        for key in cd_keys:
+            if key == 'opening':
+                new_content_list.append({'opening':content_dict['opening']})
+                # print(content_dict[key])
+                continue
+            else:
+                key_list = list(key) #key tuple in list form
+                temp = key_list.pop()
+                temp_content_dict = {temp:content_dict[key]}
+                while len(key_list) > 0:
+                    temp_content_dict = {key_list.pop():temp_content_dict}
+                # print(temp_content_dict, "\n\n")
+                new_content_list.append(temp_content_dict)      
+        # print('ncl')
+        # for item in new_content_list:
+            # print(item)    
+        #########################################################
+
+        new_content_dict= new_content_list.pop()
+        print(new_content_dict.keys())
+        # print(new_content_dict, "/n/n")
+        for item in new_content_list:
+            current_key  = list(item.keys())[0]
+            d1 = new_content_dict.copy()
+            # print('current key', current_key)
+            if current_key  in new_content_dict:
+                # print(True)
+                new_content_dict = WikiContentScraper.merge(d1, item) #[current_key]
+            else:
+                new_content_dict.update(item)
+            print(new_content_dict.keys())
+
+        return new_content_dict
+    
+    @staticmethod
+    def merge(a, b):#change variable names
+        merged = {}
+        if len(a) > 0 and len(b) > 0:
+            a_keys = list(a.keys())
+            b_keys = list(b.keys())
+            # print(a_keys[0], b_keys[0])
+            if a_keys[0] == b_keys[0]:# if b_keys[0] in a_keys - and modify rest of routine accordingly
+                # print(True)
+                # a[a_keys[0]].update(b[b_keys[0]])
+                # merged = {a_keys[0]:{**a[a_keys[0]],**b[b_keys[0]]}}
+                #and call the function again
+                merged = {a_keys[0]:WikiContentScraper.merge(a[a_keys[0]],b[b_keys[0]])}
+
+            else:
+                merged = a.copy()
+                merged.update(b)
+
+        else:
+            merged = a.copy()
+            merged.update(b)
+        
+        return merged
 
     def scrape_images(self):
         print("in scrape images")
