@@ -161,7 +161,7 @@ class WikiContentScraper(a.AbstractScraper):
             self.extract_data()
         else:
             self.bad_links[self.current_key] = self.current_url
-        # self.scrape_images()
+        self.scrape_images()
         
 
     def extract_data(self):
