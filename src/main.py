@@ -49,11 +49,11 @@ print("bad links", wcs.bad_links)
 
 
 
-#### Scrape ESPN ####
-esc = ESPNScraper()
-# esc.names_dict = test_info_dict
-esc.names_dict = pds.personal_info_dict
-esc.run()
+# #### Scrape ESPN ####
+# esc = ESPNScraper()
+# # esc.names_dict = test_info_dict
+# esc.names_dict = pds.personal_info_dict
+# esc.run()
 
 
 

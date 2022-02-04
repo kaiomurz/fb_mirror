@@ -117,7 +117,8 @@ class WikiContentScraper(a.AbstractScraper):
         #validate whether there's a URL        
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor: 
             executor.map(self.crawl, self.urls)
-        # self.consolidated_json = json.dumps(self.consolidated_dict, indent = 4)
+        print("after run:", self.consolidated_dict.keys())
+        self.consolidated_json = json.dumps(self.consolidated_dict, indent = 4)
 
     def crawl(self, url: str):
         """
@@ -347,9 +348,9 @@ class WikiContentScraper(a.AbstractScraper):
             img.raw.decode_content = True
             shutil.copyfileobj(img.raw, f)
 
-    def save_result(self, file_name):
-        pass
-
+    def save_result(self, file_name = 'wiki_result.json'):
+        with open(file_name,'wb') as f:
+            f.write(self.consolidated_json)
 
 def get_wikipedia_links(personal_info_dict:dict) -> Tuple[dict,dict]:        
     """

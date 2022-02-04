@@ -4,6 +4,9 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+from sqlalchemy import create_engine
+import psycopg2
+
 from scrapers import abstract_scraper as a
 
 
@@ -300,8 +303,28 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
         return df.head(loc)
 
     def save_result(self, file_name):
+
         pass
         
+    def insert_to_postgres(self):
+        connect = "postgresql+psycopg2://postgres:53ormonde@localhost:5432/FBAggregator"
+        engine = create_engine(connect)
+        self.personal_info_df.to_sql(
+            'personal_info',
+            con=engine,
+            index=False,
+            if_exists='replace',
+            index_label = 'player_id'
+        )
+        ### set player_id as index
+
+        self.stats_df.to_sql(
+            'stats',
+            con=engine,
+            index=False,
+            if_exists='replace'
+        )
+
 
 
 #pd.DataFrame.from_dict(d, orient='index')
