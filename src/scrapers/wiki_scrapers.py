@@ -77,7 +77,7 @@ class WikiContentScraper(a.AbstractScraper):
 
 
     Other methods specific to WikiContentScraper
-    -------------
+    --------------------------------------------
     set_urls():
         create url_list for crawling from urls_dict
     get_wiki_content():
@@ -88,9 +88,23 @@ class WikiContentScraper(a.AbstractScraper):
         concatenate content text to existing content text at current text section of body
     clean_header(text): static method
         extracts relevant header text from all the header text
-    update_header_text_dict(current_header)
+    update_header_text_dict(current_header):
         modify current header tuple to incorporate current header and eliminate lower
         order headers.
+    scrape_images(self):
+        Scrape images, if any, from player's Wikipedia site.
+
+    Static Methods
+    --------------
+    structure_as_dict(content_dict: dict)->dict:    
+        uses the tree-like structure of Wikipedia articlerepresented in the 
+        tuple keys of content dict to return a correponding nested dictionary    
+    merge(a: dict,b: dict)->dict:
+        merge dictionaries a and b so that items with identical keys in the two dicts
+        are combined under a dict under that key.
+    get_and_save_image(img_url: str, file_name: str)->None:
+        Downloads image at img_url and saves in file_name
+    
 
     """       
     def __init__(self) -> None:
@@ -248,7 +262,12 @@ class WikiContentScraper(a.AbstractScraper):
 
 
     @staticmethod
-    def structure_as_dict(content_dict):
+    def structure_as_dict(content_dict: dict)->dict:
+        '''
+        uses the tree-like structure of Wikipedia articlerepresented in the 
+        tuple keys of content dict to return a correponding nested dictionary  
+        '''
+        
         cd_keys = list(content_dict.keys())
         # print(cd_keys)
         new_content_list = []
@@ -283,7 +302,8 @@ class WikiContentScraper(a.AbstractScraper):
                 print("before", new_content_dict.keys())
                 new_content_dict = WikiContentScraper.merge(d1, item) #[current_key]
                 print("after", new_content_dict.keys())
-                if len(new_content_dict) < len(temp):
+                if len(new_content_dict) < len(temp): # this is a hack to correct an unknown bug where the 
+                                                      # all but keys of the top level dictionary disappear
                     new_content_dict = temp
 
             else:
@@ -294,23 +314,23 @@ class WikiContentScraper(a.AbstractScraper):
         return new_content_dict
     
     @staticmethod
-    def merge(a, b):#change variable names
-        # print("in merge")
-        # print(f'a:{len(a)}, b:{len(b)}')        
-        # print('test')
-        # print(f'a:{a.keys()}, b:{b.keys()}')
+    def merge(a: dict, b: dict)-> dict: 
+        '''
+        merge dictionaries a and b so that items with identical keys in the two dicts
+        are combined under a dict under that key. This is done recursively to merge nested
+        dicts in such a way that even the lower-level values are merged into the right 
+        nested structure. 
+
+        Variables:
+        a, b: dict
+        '''
+        
         merged = {}
         if len(a) > 0 and len(b) > 0:
             a_keys = list(a.keys())
             b_keys = list(b.keys())
-            # print(a_keys[0], b_keys[0])
             if a_keys[0] == b_keys[0]:# if b_keys[0] in a_keys - and modify rest of routine accordingly
-                # print(True)
-                # a[a_keys[0]].update(b[b_keys[0]])
-                # merged = {a_keys[0]:{**a[a_keys[0]],**b[b_keys[0]]}}
-                #and call the function again
                 merged = {a_keys[0]:WikiContentScraper.merge(a[a_keys[0]],b[b_keys[0]])}
-
             else:
                 merged = a.copy()
                 merged.update(b)
@@ -322,6 +342,12 @@ class WikiContentScraper(a.AbstractScraper):
         return merged
 
     def scrape_images(self):
+        '''
+        Scrape images, if any, from player's Wikipedia site.
+        - identify relevant images in soup
+        - call get_and_save_image()
+        '''
+
         print("in scrape images")
         img_list = self.soup.find_all("img")
 
@@ -337,8 +363,12 @@ class WikiContentScraper(a.AbstractScraper):
                     self.get_and_save_image(url, file_name)
                     im_count+=1
 
-    @staticmethod
-    def get_and_save_image(img_url, file_name):
+    @staticmethod    
+    def get_and_save_image(img_url: str, file_name: str)->None:
+        '''
+        Downloads image at img_url and saves in file_name
+        '''
+        
         print("in get and save")
         img = requests.get(img_url, stream=True)
         print("image retrieved", img)
