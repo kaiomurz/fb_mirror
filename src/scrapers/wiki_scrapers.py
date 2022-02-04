@@ -22,10 +22,7 @@ class WikiContentScraper(a.AbstractScraper):
     current_url: str
         url whose soup is being currently processed
     content_set: set
-        yet to be implemented.
-    consolidated_dict: dict
-        consolidated dictionary of content with ids as keys and 
-        content_dict as values
+        yet to be implemented.  
     content_dict: dict
         wikipedia content for a single player with keys as heading
         tuples and values as content text. The reason it's an instance 
@@ -33,6 +30,11 @@ class WikiContentScraper(a.AbstractScraper):
         get_wiki_content is that it can be inspected in the repl while
         debugging in case of the code failing while processing current 
         player's content
+    consolidated_dict: dict
+        consolidated dictionary of content with ids as keys and 
+        content_dict as values
+    consolidated_json:
+        json object representing consolidated_dict
     header_stack: list
         list of headers hierarchical order that apply to current text
         being considered
@@ -55,6 +57,8 @@ class WikiContentScraper(a.AbstractScraper):
         content_dict will be created.
     bad_links: dict
         dictionary of failed links with ids as keys and links as values
+
+    (ADD ATTRIBUTES USED IN JSONIFYING CONTENT DICT)
 
 
     Abstract methods in AbstractScraper written for this class:
@@ -263,10 +267,10 @@ class WikiContentScraper(a.AbstractScraper):
 
     @staticmethod
     def structure_as_dict(content_dict: dict)->dict:
-        '''
+        """
         uses the tree-like structure of Wikipedia articlerepresented in the 
         tuple keys of content dict to return a correponding nested dictionary  
-        '''
+        """
         
         cd_keys = list(content_dict.keys())
         # print(cd_keys)
@@ -315,7 +319,7 @@ class WikiContentScraper(a.AbstractScraper):
     
     @staticmethod
     def merge(a: dict, b: dict)-> dict: 
-        '''
+        """
         merge dictionaries a and b so that items with identical keys in the two dicts
         are combined under a dict under that key. This is done recursively to merge nested
         dicts in such a way that even the lower-level values are merged into the right 
@@ -323,7 +327,7 @@ class WikiContentScraper(a.AbstractScraper):
 
         Variables:
         a, b: dict
-        '''
+        """
         
         merged = {}
         if len(a) > 0 and len(b) > 0:
@@ -342,11 +346,11 @@ class WikiContentScraper(a.AbstractScraper):
         return merged
 
     def scrape_images(self):
-        '''
+        """
         Scrape images, if any, from player's Wikipedia site.
         - identify relevant images in soup
         - call get_and_save_image()
-        '''
+        """
 
         print("in scrape images")
         img_list = self.soup.find_all("img")
@@ -365,9 +369,9 @@ class WikiContentScraper(a.AbstractScraper):
 
     @staticmethod    
     def get_and_save_image(img_url: str, file_name: str)->None:
-        '''
+        """
         Downloads image at img_url and saves in file_name
-        '''
+        """
         
         print("in get and save")
         img = requests.get(img_url, stream=True)
