@@ -15,9 +15,8 @@ The idea is not necessarily to scrape large volumes of data but to demonstrate w
 
 #### Intended functionality:  
 - Crawl [FBRef](https://fbref.com/) to get a list of players in the top European football leagues and stats on the players. _(structured data)_
-- Based of names of players in the first database, automatically crawl Wikipedia pages of players and scrape images, and the article. Retrieve the article and its headings structure so it can be stored as a json object _(scraping unstructured data and storing in NoSQL DB, and scraping images)_  
+- Based of names of players in the first database, figure out the correct Wikipedia link for each player using results from DuckDuckGo's api and then scrape the images and the article from the page. Retrieve the article and its headings structure so it can be stored as a json object _(using APIs, scraping unstructured data and storing in NoSQL DB, and scraping images)_  
 - Access the most recent news headlines on player as they appear in the autocomplete in the search box of [ESPN](https://www.espn.co.uk/football/). _(interacting with browser elements and executing JS)_.  
-- Access Twitter's API to retrieve the most recent tweets by players. _(using APIs)_  
   
 Time permitting, I could build a rudimentary website based on either Flask or FastAPI where one can type in the name of a player and get collated info from all the various sources.
 
@@ -25,7 +24,7 @@ Time permitting, I could build a rudimentary website based on either Flask or Fa
 
 ![fb_aggregator tree](tree.jpg)
 
-The meat of the project is in the ```/src``` folder. The ```/scrapers``` folder within it contains an abstract base class for a scraper and also classes to create various scrapers for [FBRef](https://fbref.com/) and Wikipedia.  
+The meat of the project is in the ```/src``` folder. The ```/scrapers``` folder within it contains an abstract base class for a scraper and also classes to create various scrapers for [FBRef](https://fbref.com/), Wikipedia, and ESPN.  
 
 There are three different scraper classes in ```fbref_scrapers.py```. These include ones for:  
 - retrieving the links of teams the Big 5 European leagues,  
@@ -34,20 +33,23 @@ There are three different scraper classes in ```fbref_scrapers.py```. These incl
 
 The data thus retrieved is stored in two dataframes, one for personal information (one row per player) and one that accumulates all the statistics on the player's page (one row for every season for every player). Both the tables have a ```player_id``` column that could be used to join them for SQL queries. 
 
+
+
 ```main.py``` coordinates the entire entire pipeline. 
 
 
 
 
 ## How to run the project
-Only about half the intended functionality has been implemented but that can be accessed simply by running ```main.py``` in a REPL, assuming the required packages are available (see section on packages required at the end of this document). 
+Some of the intended functionality has yest to be implemented but most of it can be accessed simply by running ```main.py``` in a REPL, assuming the required packages are available (see section on packages required at the end of this document). 
 At the end of the run, three objects will be available to the user:   
 - ```pds``` of class ```PlayerDataScraper```,   
 - ```wcs``` of class ```WikiContentScraper```, and  
 - ```esc``` of class ```ESPNScraper```.  
 
 ### _pds_
-The results of ```pds``` can be accessed by calling the attributes ```pds.personal_info_df``` and ```pds.stats_df``` which contain the personal information and stats dataframes respectively.  
+The results of ```pds``` can be accessed by calling the attributes ```pds.personal_info_df``` and ```pds.stats_df``` which contain the personal information and stats dataframes respectively. 
+There is also a method that inserts these tables into a Postgres Database (insert_to_postgres()). 
 
 ### _wcs_
 The results of ```wcs``` are a bit harder to parse at this stage. ```wcs.content_dict``` contains the content extracted for the last player processed. Calling ```wcs.content_dict.keys()``` will give you an idea of the structure extracted from that player's Wikipedia page. Accessing the content of a given key will display the paragraphs under the section the key represents.  
@@ -66,14 +68,14 @@ Accessing ```wcs.content_dict[('International career', '2011 South American Yout
 
 (note: all the keys are tuples except 'opening', which is a string.)  
 
-So, as mentioned, ```wcs.content_dict``` contains the Wikipedia content and structure of the last-processed player. ```wcs.consolidated_dict``` simply contains the ```content_dicts``` of all players indexed by the same ```player_id``` used in ```pds.personal_info_dict```.  
+So, as mentioned, ```wcs.content_dict``` contains the Wikipedia content and structure of the last-processed player. ```new_content_dict``` contains the same information but in a tree structure that reflects the structure of original Wikipedia article. Finally,  ```wcs.consolidated_dict``` simply contains the ```new_content_dicts``` of all players indexed by the same ```player_id``` used in ```pds.personal_info_dict```.  
 
 Additionally, the ```wcs``` object would have also downloaded any images on the Wikipedia site and stored them in a folder call ```test_images``` in ```src```. 
 
-### _pds_
+### _ecs_
 ```pds.news_dict``` returns a dictionary with player_id as key and a list containing tuples (news headline, link)
 
-There are comprehensive docstrings available for both these objects that can be accessed by ```help(pds)``` or ```help(wcs)```.
+There are comprehensive docstrings available for both these objects that can be accessed by ```help(<object name>)```.
 
 ## Yet to be implemented
 - store dataframes in a Postgres database  
@@ -85,3 +87,6 @@ There are comprehensive docstrings available for both these objects that can be 
 
 - Requests
 - BeautifulSoup4  
+- Playwright
+- SQLAlchemy
+- Psycopg
