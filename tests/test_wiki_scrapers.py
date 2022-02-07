@@ -1,4 +1,3 @@
-import sys
 import unittest
 from unittest import result
 from src.scrapers import wiki_scrapers as ws
@@ -11,9 +10,17 @@ class TestMerge(unittest.TestCase):
         b = {1:{4:5}}
         result = wsc.merge(a,b)
         self.assertEqual(result, {1:{2:3, 4:5}})
-        ### also write test for dicts with different keys and recursive calls
+        
+        a = {1:{2:3}}
+        b = {2:{4:5}}
+        result = wsc.merge(a,b)
+        self.assertEqual(result, {1:{2:3}, 2:{4:5}})
+
+        a = {1:{2:{3:4}}}
+        b = {1:{2:{4:5}}}
+        result = wsc.merge(a,b)
+        self.assertEqual(result, {1:{2:{3:4,4:5}}})
+
 
 if __name__ == "__main__":
-    # sys.path.append("src/scrapers")
-    print(sys.path)
     unittest.main()

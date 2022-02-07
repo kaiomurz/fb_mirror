@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 # from scrapers import abstract_scraper as a # works for run main.py
 from src.scrapers import abstract_scraper as a
-# import abstract_scraper as a
+# import abstract_scraper as a # works for unittest
 
 
 
@@ -90,7 +90,7 @@ class WikiContentScraper(a.AbstractScraper):
         create url_list for crawling from urls_dict
     get_wiki_content():
         cycle through body of wikipedia page and organise content in a dictionary
-        where the keys are tuples of heading hierarchies and values are the
+        where the keys are tuples of heading hierarchies and values are the1
         contents of the paragraphs.
     add_text(text)
         concatenate content text to existing content text at current text section of body
