@@ -8,7 +8,11 @@ import concurrent.futures
 
 import requests
 from bs4 import BeautifulSoup
-from scrapers import abstract_scraper as a
+# from scrapers import abstract_scraper as a # works for run main.py
+from src.scrapers import abstract_scraper as a
+# import abstract_scraper as a
+
+
 
 class WikiContentScraper(a.AbstractScraper):
     """
@@ -421,22 +425,24 @@ def get_wikipedia_links(personal_info_dict:dict) -> Tuple[dict,dict]:
         #the 'and' clause is to weed out links that say 
         # "<country>international_footballers" instead of 
         # "<player_name>footballer"
-        if "footballer" in response_json["RelatedTopics"][0]["FirstURL"]\
-        and "footballers" not in response_json["RelatedTopics"][0]["FirstURL"]:
-            wiki_link  = response_json["RelatedTopics"][0]["FirstURL"]\
-                .replace("duckduckgo.com", "en.wikipedia.org/wiki")\
-                .replace("%2C", ",")
-            wiki_urls_dict[wiki_link] = id
-                  
-        else:
-            abstract_url = response_json["AbstractURL"]
-            if "wikipedia" in abstract_url:
-                wiki_link =  abstract_url
+        try:
+            if "footballer" in response_json["RelatedTopics"][0]["FirstURL"]\
+            and "footballers" not in response_json["RelatedTopics"][0]["FirstURL"]:
+                wiki_link  = response_json["RelatedTopics"][0]["FirstURL"]\
+                    .replace("duckduckgo.com", "en.wikipedia.org/wiki")\
+                    .replace("%2C", ",")
                 wiki_urls_dict[wiki_link] = id
-
+                    
             else:
-                errors_dict[names_dict[id]] = "No wiki link"          
-       
+                abstract_url = response_json["AbstractURL"]
+                if "wikipedia" in abstract_url:
+                    wiki_link =  abstract_url
+                    wiki_urls_dict[wiki_link] = id
+
+                else:
+                    errors_dict[names_dict[id]] = "No wiki link"          
+        except:
+            errors_dict[names_dict[id]] = "unknown error"
 
     return wiki_urls_dict, errors_dict
 

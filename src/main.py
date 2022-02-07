@@ -7,12 +7,18 @@ import random
 
 #### Scrape FBRef ####
 club_urls_scraper = ClubURLsScraper()
+print("club url scraper created")
 player_urls_scraper = PlayerURLsScraper()
+print("player url scraper created")
 
 club_urls_scraper.run()
+print("club url scraper created")
+
 player_urls_scraper.urls = club_urls_scraper.result[:5]### modify to do complete search
 # print(player_urls_scraper.urls)
 player_urls_scraper.run()
+print("player url scraper created")
+
 # print(player_urls_scraper.result)
 
 keys = random.sample(list(player_urls_scraper.result.keys()), 5) ### modify to do complete search
@@ -50,10 +56,10 @@ print("bad links", wcs.bad_links)
 
 
 # #### Scrape ESPN ####
-esc = ESPNScraper()
-# esc.names_dict = test_info_dict
-esc.names_dict = pds.personal_info_dict
-esc.run()
+# esc = ESPNScraper()
+# # esc.names_dict = test_info_dict
+# esc.names_dict = pds.personal_info_dict
+# esc.run()
 
 
 
