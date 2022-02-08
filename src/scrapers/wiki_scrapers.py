@@ -9,8 +9,7 @@ import concurrent.futures
 import requests
 from bs4 import BeautifulSoup
 # from scrapers import abstract_scraper as a # works for run main.py
-from src.scrapers import abstract_scraper as a
-# import abstract_scraper as a # works for unittest
+from src.scrapers import abstract_scraper as a  # works for unittest
 
 
 
@@ -85,9 +84,7 @@ class WikiContentScraper(a.AbstractScraper):
 
 
     Other methods specific to WikiContentScraper
-    --------------------------------------------
-    set_urls():
-        create url_list for crawling from urls_dict
+    --------------------------------------------   
     get_wiki_content():
         cycle through body of wikipedia page and organise content in a dictionary
         where the keys are tuples of heading hierarchies and values are the1
@@ -128,15 +125,16 @@ class WikiContentScraper(a.AbstractScraper):
         self.header_order = ['h2','h3','h4','h5']
         self.bad_links = {}
         self.max_workers = 1
-
-    def set_urls(self):
-        self.urls = list(self.urls_dict.keys())
+ 
 
     def run(self) -> None:
         """
         creates ThreadPoolExecutor with list of URLs and calls crawl().
         """
-        #validate whether there's a URL        
+        #validate whether there's a URL
+        
+        self.urls = list(self.urls_dict.keys())
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor: 
             executor.map(self.crawl, self.urls)
         print("after run:", self.consolidated_dict.keys())
@@ -259,7 +257,6 @@ class WikiContentScraper(a.AbstractScraper):
         - eliminate headers in header tuple that are lower order than 
           current_header.
         """
-        
         header_index = self.header_order.index(current_header)
         for header in self.header_order[header_index:]:
             # print(header)
@@ -390,7 +387,7 @@ class WikiContentScraper(a.AbstractScraper):
         with open(file_name,'wb') as f:
             f.write(self.consolidated_json)
 
-def get_wikipedia_links(personal_info_dict:dict) -> Tuple[dict,dict]:        
+def get_wikipedia_links(personal_info_dict:dict) -> Tuple[dict, dict]:        
     """
     This function takes a dictionary in the format of a .personal_info_dict
     attribute of PlayerDataScraperClass and returns a dictionary with 
