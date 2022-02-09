@@ -7,7 +7,11 @@ from bs4 import BeautifulSoup
 from sqlalchemy import create_engine
 import psycopg2
 
-from scrapers import abstract_scraper as a
+
+try:
+    from src.scrapers import abstract_scraper as a  # works for unittest
+except:
+    from scrapers import abstract_scraper as a # works for run main.py
 
 
 class ClubURLsScraper(a.AbstractScraper):
@@ -188,7 +192,7 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
         else: #get return df and add to stats_df
             self.get_stats()
 
-    def get_personal_info(self): #why are only 2 players being added??
+    def get_personal_info(self): 
         """
         extracts 
             - name
@@ -293,7 +297,7 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
         df.columns = new_columns
 
         # truncate df after list of seasons
-        print(df[df.columns[:5]].head())
+        # print(df[df.columns[:5]].head())
         loc = 0
         for i, season in enumerate(df['Season']):
             if str(season).endswith('Seasons'):
