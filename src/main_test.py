@@ -25,11 +25,11 @@ import random
 # keys = random.sample(list(player_urls_scraper.result.keys()), 5) ### modify to do complete search
 
 # urls_dict = {key:player_urls_scraper.result[key] for key in keys}
-urls_dict = {'https://fbref.com/en/players/d70ce98e/Lionel-Messi':1}
+# urls_dict = {'https://fbref.com/en/players/d70ce98e/Lionel-Messi':1}
 
-pds = PlayerDataScraper()
-pds.urls_dict = urls_dict
-pds.run()
+# pds = PlayerDataScraper()
+# pds.urls_dict = urls_dict
+# pds.run()
 
 
 #### Scrape Wikipedia ####
@@ -62,3 +62,23 @@ pds.run()
 #individual and combined
 
 # print(wcs.urls_dict)
+
+
+#### Scrape ESPN ####
+test_info_dict = {
+        # 1:{"name": "Josip Stanišić"},
+        # 2:{"name": "Fabinho"},
+        # 3:{"name": "Thomas Müller"},
+        # 4:{"name": "Neymar Jr."},
+        5:{"name": "Lionel Messi"}#, 
+        # 6:{"name": "Jordan Henderson"},
+        # 7:{"name": "Andriy Lunin"},      
+        # 8:{"name": "Deliberate error"}
+}
+#### Scrape ESPN ####
+esc = ESPNScraper()
+esc.names_dict = test_info_dict
+# esc.names_dict = pds.personal_info_dict
+esc.run()
+
+

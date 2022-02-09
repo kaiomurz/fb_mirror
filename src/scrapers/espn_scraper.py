@@ -3,7 +3,10 @@ import concurrent.futures
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
-from scrapers import abstract_scraper as a
+try:
+    from src.scrapers import abstract_scraper as a  # works for unittest
+except:
+    from scrapers import abstract_scraper as a # works for run main.py
 
 class ESPNScraper(a.AbstractScraper):
     """
@@ -31,7 +34,7 @@ class ESPNScraper(a.AbstractScraper):
 
     Other class methods
     -------------------
-    get_soup:
+    get_soup():
         The core of the scraper - uses Playwright to navigate main page and 
         search site for news on player. 
 
@@ -90,11 +93,10 @@ class ESPNScraper(a.AbstractScraper):
             page.locator("text=Continue without Accepting").click()
             page.locator("id=global-search-trigger").click()
             page.locator("id=global-search-input").fill(self.name)
-            print("name filled")
             # # page.wait_for_timeout(10000)
             page.locator("//html/body/div[5]/div[2]/header/div[2]/ul/li[1]/div/div[1]/input[2]").click()
 
-            page.wait_for_timeout(5000)
+            page.wait_for_timeout(5000) #wait for news to load
             self.html = page.content()
             self.soup = BeautifulSoup(self.html, 'html.parser')
 
