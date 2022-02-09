@@ -8,17 +8,17 @@ from src.scrapers import wiki_scrapers as ws
 
 class TestWikiScrapers(unittest.TestCase):   
 
-    # def test_get_wiki_content(self):
-    #     wcs = ws.WikiContentScraper
-    #     with open('tests/wiki_scraper_data/lionel_messi_html.pickle', 'rb') as f:
-    #         wcs.html = pickle.load(f)
-    #     wcs.soup = BeautifulSoup(wcs.html, 'html.parser')
-    #     wcs.get_wiki_content(wcs)
-    #     result = wcs.content_dict
-    #     with open('tests/wiki_scraper_data/lionel_messi_content_dict.pickle', 'rb') as f:
-    #         expected_result = pickle.load(f)
+    def test_get_wiki_content(self):
+        wcs = ws.WikiContentScraper()
+        with open('tests/wiki_scraper_data/lionel_messi_html.pickle', 'rb') as f:
+            wcs.html = pickle.load(f)
+        wcs.soup = BeautifulSoup(wcs.html, 'html.parser')
+        wcs.get_wiki_content()#wcs
+        result = wcs.content_dict
+        with open('tests/wiki_scraper_data/lionel_messi_content_dict.pickle', 'rb') as f:
+            expected_result = pickle.load(f)
         
-    #     self.assertEqual(result, expected_result)
+        self.assertEqual(result, expected_result)
 
     def test_add_text(self):
         wcs = ws.WikiContentScraper()

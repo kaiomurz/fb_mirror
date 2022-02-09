@@ -8,8 +8,10 @@ import concurrent.futures
 
 import requests
 from bs4 import BeautifulSoup
-# from scrapers import abstract_scraper as a # works for run main.py
-from src.scrapers import abstract_scraper as a  # works for unittest
+try:
+    from src.scrapers import abstract_scraper as a  # works for unittest
+except:
+    from scrapers import abstract_scraper as a # works for run main.py
 
 
 
