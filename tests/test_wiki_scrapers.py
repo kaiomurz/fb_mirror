@@ -1,5 +1,4 @@
 import unittest
-from unittest import result
 import pickle
 from bs4 import BeautifulSoup
 from src.scrapers import wiki_scrapers as ws

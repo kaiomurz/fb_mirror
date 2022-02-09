@@ -107,7 +107,6 @@ class ESPNScraper(a.AbstractScraper):
         Extracts headlines and links from soup.
         """
         
-        print("in extract data", self.name)
 
         news_divs = self.soup.find_all("li", class_="article__Results__Item")
         self.news_list = []
