@@ -1,4 +1,5 @@
 import concurrent.futures
+from tkinter import END
 
 import pandas as pd
 import requests
@@ -310,9 +311,21 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
 
         pass
         
-    def insert_to_postgres(self):
-        connect = "postgresql+psycopg2://postgres:53ormonde@localhost:5432/FBAggregator"
-        engine = create_engine(connect)
+    def insert_to_db(self):
+        # AWS endpoint database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com        
+
+        DATABASE_TYPE = 'postgresql'
+        DBAPI = 'psycopg2'
+        ENDPOINT = 'database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com'
+        USER = 'postgres'
+        PASSWORD = '53ormonde' #(Change to AICore22)
+        PORT = '5432'
+        DATABASE = 'postgres'
+            
+        engine = create_engine(f'{DATABASE_TYPE}+{DBAPI}://{USER}:{PASSWORD}@{ENDPOINT}:{PORT}/{DATABASE}')
+        engine.connect()
+
+
         self.personal_info_df.to_sql(
             'personal_info',
             con=engine,
@@ -320,7 +333,6 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
             if_exists='replace',
             index_label = 'player_id'
         )
-        ### set player_id as index
 
         self.stats_df.to_sql(
             'stats',
@@ -330,6 +342,11 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
         )
 
 
+# connect = "postgresql+psycopg2://postgres:53ormonde@localhost:5432/FBAggregator"
+# connect = "postgresql+psycopg2://postgres:53ormonde@database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com"
+    # connect = f'{DATABASE_TYPE}+{DBAPI}://{USER}+{PASSWORD}@{ENDPOINT}:{PORT}/{DATABASE}'
+    # print(connect)
+    #AICore22
 
 #pd.DataFrame.from_dict(d, orient='index')
 

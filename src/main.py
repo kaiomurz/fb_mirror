@@ -27,7 +27,7 @@ urls_dict = {key:player_urls_scraper.result[key] for key in keys}
 pds = PlayerDataScraper()
 pds.urls_dict = urls_dict
 pds.run()
-pds.get_stats() ####should this be in extract data?
+# pds.get_stats() ####should this be in extract data?
 
 
 #### Scrape Wikipedia ####
@@ -44,13 +44,13 @@ test_info_dict = {
     4:{"name": "Error Test"},
     5:{"name": "Josip Stanišić"}
 }
-wcs = WikiContentScraper()
-wcs.urls_dict, errors = get_wikipedia_links(pds.personal_info_dict)
-# wcs.urls_dict, errors = get_wikipedia_links(test_info_dict)
-print("errors from get_wikipedia_links", errors)
-wcs.set_urls()
-wcs.run()
-print("bad links", wcs.bad_links)
+# wcs = WikiContentScraper()
+# wcs.urls_dict, errors = get_wikipedia_links(pds.personal_info_dict)
+# # wcs.urls_dict, errors = get_wikipedia_links(test_info_dict)
+# print("errors from get_wikipedia_links", errors)
+# wcs.set_urls()
+# wcs.run()
+# print("bad links", wcs.bad_links)
 # wcs.extract_data()
 
 
