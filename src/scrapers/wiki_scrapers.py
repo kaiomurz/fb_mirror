@@ -6,6 +6,7 @@ import os
 import re
 import concurrent.futures
 from urllib import response
+import os
 
 import requests
 from bs4 import BeautifulSoup
@@ -149,6 +150,7 @@ class WikiContentScraper(a.AbstractScraper):
             executor.map(self.crawl, self.urls)
         print("after run:", self.consolidated_dict.keys())
         self.consolidated_json = json.dumps(self.consolidated_dict, indent = 4)
+        #self.save_to_s3()
 
     def crawl(self, url: str):
         """
@@ -393,26 +395,57 @@ class WikiContentScraper(a.AbstractScraper):
             print("saving file", file_name)
             img.raw.decode_content = True
             shutil.copyfileobj(img.raw, f)
-        print('s3 file name', file_name[16:])
-        try:
-            s3_client = boto3.client('s3')
-            response = s3_client.upload_file(file_name, 'fbaggregatorimages', file_name[16:])
+        # print('s3 file name', file_name[16:])
+        # try:
+        #     s3_client = boto3.client('s3')
+        #     # response = s3_client.upload_file(file_name, bucket, object_name)
+        #     response = s3_client.upload_file(file_name, 'fbaggregatorimages', 'wiki_images/'+file_name[16:])
+        #     print("uploaded file", file_name)
+
+        # except:
+        #     print('boto3 error')
+        
+        
+
+  
+    def save_result(self):
+        """
+        - Save json to local storage
+        - Delete existing images and wiki_json in s3
+        - Save json to s3
+        - Save images to s3 folder
+        - Delete local json and images
+        """
+
+        # Save json to local storage
+        #delete old json?
+        with open('wiki_result.json','w') as f:
+            json.dump(self.consolidated_dict, f)
+        
+        s3_client = boto3.client('s3')
+        BUCKET = 'fbaggregatorimages'
+
+        # Delete existing images and wiki_json in s3
+        PREFIX = 'wiki_images/'
+        response = s3_client.list_objects_v2(Bucket=BUCKET, Prefix=PREFIX) #check for capitalisation
+        for object in response['Contents']:
+            s3_client.delete_object(Bucket=BUCKET, Key=object['Key'])
+        print('s3 images deleted')    
+
+
+        # Save images to s3 folder
+        for file in os.listdir('src/test_images'):
+            file_name = f'src/test_images/{file}'
+            response = s3_client.upload_file(file_name, 'fbaggregatorimages', 'wiki_images/'+file)
             print("uploaded file", file_name)
 
-        except:
-            print('boto3 error')
-        
-        # response = s3_client.upload_file(file_name, bucket, file_name)        
-        # response = s3_client.upload_file(file_name, 'fbaggregatorimages', file_name[16:])
-        # s3_client.upload_file(file_name, 'fbaggregatorimages', file_name[16:])
-        # response = s3_client.upload_file(file_name, 'fbaggregatorimages', img.raw)
-
-        # response = s3_client.upload_file('cat_0.jpg', 'cat-scraper', 'cat.jpg')
+        # Save json to s3
+        # response = s3_client.upload_file(file_name, bucket, object_name)
+        response = s3_client.upload_file('wiki_result.json', 'fbaggregatorimages', 'wiki_result.json')
+        print('uploaded')
+        #delete local json
 
 
-    def save_result(self, file_name = 'wiki_result.json'):
-        with open(file_name,'wb') as f:
-            f.write(self.consolidated_json)
 
 def get_wikipedia_links(personal_info_dict:dict) -> Tuple[dict, dict]:        
     """
