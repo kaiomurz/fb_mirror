@@ -8,6 +8,10 @@ import concurrent.futures
 
 import requests
 from bs4 import BeautifulSoup
+
+import boto3
+
+
 try:
     from src.scrapers import abstract_scraper as a  # works for unittest
 except:
@@ -365,7 +369,7 @@ class WikiContentScraper(a.AbstractScraper):
                 print(i, img['src'])                
                 if "/thumb/" in img['src'] and "svg" not in img["src"]:
                     url = "https:"+img["src"]
-                    file_name = "test_images/" + str(self.current_key) +  str(im_count) #"test_images/" + "/" +
+                    file_name = "src/test_images/" + str(self.current_key) +  str(im_count) #"test_images/" + "/" +
                     print(file_name)
                     self.get_and_save_image(url, file_name)
                     im_count+=1

@@ -6,27 +6,27 @@ import random
 
 
 #### Scrape FBRef ####
-club_urls_scraper = ClubURLsScraper()
-print("club url scraper created")
-player_urls_scraper = PlayerURLsScraper()
-print("player url scraper created")
+# club_urls_scraper = ClubURLsScraper()
+# print("club url scraper created")
+# player_urls_scraper = PlayerURLsScraper()
+# print("player url scraper created")
 
-club_urls_scraper.run()
-print("club url scraper created")
+# club_urls_scraper.run()
+# print("club url scraper created")
 
-player_urls_scraper.urls = club_urls_scraper.result[:5]### modify to do complete search
-# print(player_urls_scraper.urls)
-player_urls_scraper.run()
-print("player url scraper created")
+# player_urls_scraper.urls = club_urls_scraper.result[:5]### modify to do complete search
+# # print(player_urls_scraper.urls)
+# player_urls_scraper.run()
+# print("player url scraper created")
 
-# print(player_urls_scraper.result)
+# # print(player_urls_scraper.result)
 
-keys = random.sample(list(player_urls_scraper.result.keys()), 5) ### modify to do complete search
+# keys = random.sample(list(player_urls_scraper.result.keys()), 5) ### modify to do complete search
 
-urls_dict = {key:player_urls_scraper.result[key] for key in keys}
-pds = PlayerDataScraper()
-pds.urls_dict = urls_dict
-pds.run()
+# urls_dict = {key:player_urls_scraper.result[key] for key in keys}
+# pds = PlayerDataScraper()
+# pds.urls_dict = urls_dict
+# pds.run()
 # pds.get_stats() ####should this be in extract data?
 
 
@@ -44,14 +44,13 @@ test_info_dict = {
     4:{"name": "Error Test"},
     5:{"name": "Josip Stanišić"}
 }
-# wcs = WikiContentScraper()
+wcs = WikiContentScraper()
 # wcs.urls_dict, errors = get_wikipedia_links(pds.personal_info_dict)
-# # wcs.urls_dict, errors = get_wikipedia_links(test_info_dict)
-# print("errors from get_wikipedia_links", errors)
-# wcs.set_urls()
-# wcs.run()
-# print("bad links", wcs.bad_links)
-# wcs.extract_data()
+wcs.urls_dict, errors = get_wikipedia_links(test_info_dict)
+print("errors from get_wikipedia_links", errors)
+wcs.run()
+print("bad links", wcs.bad_links)
+wcs.extract_data()
 
 
 

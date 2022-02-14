@@ -356,3 +356,5 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
 
 # if __name__ == "__main__":
 #     print("parser imported")
+
+
