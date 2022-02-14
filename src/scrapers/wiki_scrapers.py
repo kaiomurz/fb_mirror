@@ -5,11 +5,15 @@ from typing import Tuple
 import os
 import re
 import concurrent.futures
+from urllib import response
 
 import requests
 from bs4 import BeautifulSoup
 
 import boto3
+from sqlalchemy import except_all
+if 'boto3' in dir():
+    print('boto3 imported')
 
 
 try:
@@ -165,7 +169,7 @@ class WikiContentScraper(a.AbstractScraper):
         self.html = requests.get(url).text
         self.soup = BeautifulSoup(self.html, 'html.parser')
         if "Club career" in self.html:
-            print('to extract data', self.current_url)
+            # print('to extract data', self.current_url)
             self.extract_data()
         else:
             self.bad_links[self.current_key] = self.current_url
@@ -176,7 +180,7 @@ class WikiContentScraper(a.AbstractScraper):
         """
         Call get_wiki_content and assign resulting  content_dict to consolidated_dict.
         """
-        print('in extract before', self.current_key)
+        # print('in extract before', self.current_key)
         self.get_wiki_content()
         self.new_content_dict = WikiContentScraper.structure_as_dict(self.content_dict.copy())
         # print(self.new_content_dict.keys())
@@ -310,9 +314,9 @@ class WikiContentScraper(a.AbstractScraper):
             if current_key  in new_content_dict:
                 print(True)
                 temp = new_content_dict.copy()
-                print("before", new_content_dict.keys())
+                # print("before", new_content_dict.keys())
                 new_content_dict = WikiContentScraper.merge(d1, item) #[current_key]
-                print("after", new_content_dict.keys())
+                # print("after", new_content_dict.keys())
                 if len(new_content_dict) < len(temp): # this is a hack to correct an unknown bug where the 
                                                       # all but keys of the top level dictionary disappear
                     new_content_dict = temp
@@ -366,11 +370,12 @@ class WikiContentScraper(a.AbstractScraper):
         print(len(img_list), "images found")
         if len(img_list) > 0:
             for i, img in enumerate(img_list):
-                print(i, img['src'])                
+                # print(i, img['src'])                
                 if "/thumb/" in img['src'] and "svg" not in img["src"]:
                     url = "https:"+img["src"]
-                    file_name = "src/test_images/" + str(self.current_key) +  str(im_count) #"test_images/" + "/" +
-                    print(file_name)
+                    # file_name = "src/test_images/" + str(self.current_key) +  str(im_count) #"test_images/" + "/" +
+                    file_name = f'src/test_images/{str(self.current_key)}_{str(im_count)}'
+                    # print(file_name)
                     self.get_and_save_image(url, file_name)
                     im_count+=1
 
@@ -383,11 +388,27 @@ class WikiContentScraper(a.AbstractScraper):
         print("in get and save")
         img = requests.get(img_url, stream=True)
         print("image retrieved", img)
-        print("file name outside save", file_name)
+        # print("file name outside save", file_name)
         with open(file_name, "wb") as f:
             print("saving file", file_name)
             img.raw.decode_content = True
             shutil.copyfileobj(img.raw, f)
+        print('s3 file name', file_name[16:])
+        try:
+            s3_client = boto3.client('s3')
+            response = s3_client.upload_file(file_name, 'fbaggregatorimages', file_name[16:])
+            print("uploaded file", file_name)
+
+        except:
+            print('boto3 error')
+        
+        # response = s3_client.upload_file(file_name, bucket, file_name)        
+        # response = s3_client.upload_file(file_name, 'fbaggregatorimages', file_name[16:])
+        # s3_client.upload_file(file_name, 'fbaggregatorimages', file_name[16:])
+        # response = s3_client.upload_file(file_name, 'fbaggregatorimages', img.raw)
+
+        # response = s3_client.upload_file('cat_0.jpg', 'cat-scraper', 'cat.jpg')
+
 
     def save_result(self, file_name = 'wiki_result.json'):
         with open(file_name,'wb') as f:
