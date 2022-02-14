@@ -1,7 +1,12 @@
 import concurrent.futures
+import json
+import os
+from numpy import safe_eval
 
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
+
+import boto3
 
 try:
     from src.scrapers import abstract_scraper as a  # works for unittest
@@ -54,6 +59,7 @@ class ESPNScraper(a.AbstractScraper):
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             executor.map(self.crawl, keys)
 
+        self.save_result()
         # for key in keys:
         #     self.crawl(key)
 
@@ -121,8 +127,19 @@ class ESPNScraper(a.AbstractScraper):
         print(self.news_dict)
         self.news_dict[self.current_key] = self.news_list
 
-    def save_result(self, file_name):
-        pass
+    def save_result(self):
+
+        # Save json to local storage
+        #delete old json?
+        with open('espn_result.json','w') as f:
+            json.dump(self.news_dict, f)
+
+        s3_client = boto3.client('s3')
+        response = s3_client.upload_file('espn_result.json', 'fbaggregatorimages', 'espn_result.json')
+        print('espn_json uploaded')
+        #delete local json
+        os.remove('espn_result.json')
+
 
     def get_names(self):
         pass

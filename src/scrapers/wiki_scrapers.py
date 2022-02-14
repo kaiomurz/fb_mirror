@@ -93,6 +93,9 @@ class WikiContentScraper(a.AbstractScraper):
         - checking the soup for a valid footballer page before 
           extract_data() is called.
 
+    save_result():
+        - saves images and content_dict (as json) to S3 bucket.
+
 
     Other methods specific to WikiContentScraper
     --------------------------------------------   
@@ -150,6 +153,7 @@ class WikiContentScraper(a.AbstractScraper):
             executor.map(self.crawl, self.urls)
         print("after run:", self.consolidated_dict.keys())
         self.consolidated_json = json.dumps(self.consolidated_dict, indent = 4)
+        self.save_result()
         #self.save_to_s3()
 
     def crawl(self, url: str):
@@ -416,6 +420,7 @@ class WikiContentScraper(a.AbstractScraper):
         - Save images to s3 folder
         - Delete local json and images
         """
+        print('uploading wiki results to S3')        
 
         # Save json to local storage
         #delete old json?
@@ -438,13 +443,14 @@ class WikiContentScraper(a.AbstractScraper):
             file_name = f'src/test_images/{file}'
             response = s3_client.upload_file(file_name, 'fbaggregatorimages', 'wiki_images/'+file)
             print("uploaded file", file_name)
+            os.remove(file_name)
 
         # Save json to s3
         # response = s3_client.upload_file(file_name, bucket, object_name)
         response = s3_client.upload_file('wiki_result.json', 'fbaggregatorimages', 'wiki_result.json')
-        print('uploaded')
+        print('wiki_json uploaded')
         #delete local json
-
+        os.remove('wiki_result.json')
 
 
 def get_wikipedia_links(personal_info_dict:dict) -> Tuple[dict, dict]:        

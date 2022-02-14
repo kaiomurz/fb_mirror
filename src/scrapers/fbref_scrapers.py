@@ -175,6 +175,7 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
         
         self.personal_info_df = pd.DataFrame.from_dict(self.personal_info_dict, orient='index')
         
+        self.save_result()
 
     def extract_data(self):
         """
@@ -307,12 +308,10 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
 
         return df.head(loc)
 
-    def save_result(self, file_name):
+    def save_result(self):
 
-        pass
-        
-    def insert_to_db(self):
-        # AWS endpoint database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com        
+        # AWS endpoint database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com
+        print('uploading FBref results to Postgres on RDS')        
 
         DATABASE_TYPE = 'postgresql'
         DBAPI = 'psycopg2'
