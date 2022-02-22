@@ -4,8 +4,8 @@ from scrapers.espn_scraper import ESPNScraper
 import random
 
 
-number_of_clubs = 40
-number_of_players = 400
+number_of_clubs = 5
+number_of_players = 10
 
 #### Scrape FBRef ####
 club_urls_scraper = ClubURLsScraper()
@@ -61,10 +61,10 @@ wcs.extract_data()
 
 
 # #### Scrape ESPN ####
-# esc = ESPNScraper()
-# # esc.names_dict = test_info_dict
-# esc.names_dict = pds.personal_info_dict
-# esc.run()
+esc = ESPNScraper()
+# esc.names_dict = test_info_dict
+esc.names_dict = pds.personal_info_dict
+esc.run()
 
 
 
