@@ -175,7 +175,7 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
         
         self.personal_info_df = pd.DataFrame.from_dict(self.personal_info_dict, orient='index')
         
-        self.save_result()
+        # self.save_result()
 
     def extract_data(self):
         """

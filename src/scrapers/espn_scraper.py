@@ -128,7 +128,7 @@ class ESPNScraper(a.AbstractScraper):
         self.news_dict[self.current_key] = self.news_list
 
     def save_result(self):
-
+        print('uploading ESPN results to S3 bucket')    
         # Save json to local storage
         #delete old json?
         with open('espn_result.json','w') as f:

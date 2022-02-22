@@ -478,7 +478,10 @@ def get_wikipedia_links(personal_info_dict:dict) -> Tuple[dict, dict]:
 
         url = f'https://api.duckduckgo.com/?q={name}&format=json&pretty=1'
         response = requests.get(url)
-        response_json = response.json()
+        try:
+            response_json = response.json()
+        except:
+            errors_dict[names_dict[id]] = "json error"
         response_html = response.text
 
         if "footballer" not in response_html:

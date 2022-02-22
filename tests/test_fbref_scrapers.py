@@ -59,7 +59,9 @@ class TestPlayerDataScraper(unittest.TestCase):
 
         pds = fs.PlayerDataScraper()
         pds.urls_dict = urls_dict
-        pds.run()
+        url = list(urls_dict.keys())[0]
+        pds.crawl(url)
+        
 
         with open('tests/fbref_scrapers_data/messi_stats_df.pickle','rb') as f:
             expected_stats_df = pickle.load(f)

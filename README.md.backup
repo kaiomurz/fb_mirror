@@ -79,7 +79,7 @@ Additionally, the ```wcs``` object would have also downloaded any images on the 
 There are comprehensive docstrings available for both these objects that can be accessed by ```help(<object name>)```.
 
 ## Yet to be implemented
-- containerise the application and deploy to the cloud
+- containerise the applideploy to the cloud
 
 ## Packages required
 

@@ -4,30 +4,36 @@ from scrapers.espn_scraper import ESPNScraper
 import random
 
 
+number_of_clubs = 40
+number_of_players = 400
 
 #### Scrape FBRef ####
-# club_urls_scraper = ClubURLsScraper()
-# print("club url scraper created")
-# player_urls_scraper = PlayerURLsScraper()
-# print("player url scraper created")
+club_urls_scraper = ClubURLsScraper()
+print("club url scraper created")
+player_urls_scraper = PlayerURLsScraper()
+print("player url scraper created")
 
-# club_urls_scraper.run()
-# print("club url scraper created")
+club_urls_scraper.run()
+print("club url scraper created")
 
-# player_urls_scraper.urls = club_urls_scraper.result[:5]### modify to do complete search
-# # print(player_urls_scraper.urls)
-# player_urls_scraper.run()
-# print("player url scraper created")
 
-# # print(player_urls_scraper.result)
 
-# keys = random.sample(list(player_urls_scraper.result.keys()), 5) ### modify to do complete search
+player_urls_scraper.urls = club_urls_scraper.result[:number_of_clubs]### modify to do complete search
+# print(player_urls_scraper.urls)
+player_urls_scraper.run()
+print("player url scraper created")
 
-# urls_dict = {key:player_urls_scraper.result[key] for key in keys}
-# pds = PlayerDataScraper()
-# pds.urls_dict = urls_dict
-# pds.run()
-# pds.get_stats() ####should this be in extract data?
+# print(player_urls_scraper.result)
+
+keys = random.sample(list(player_urls_scraper.result.keys()), number_of_players) ### modify to do complete search
+
+# print(keys)
+
+urls_dict = {key:player_urls_scraper.result[key] for key in keys}
+pds = PlayerDataScraper()
+pds.urls_dict = urls_dict
+pds.run()
+pds.get_stats() ####should this be in extract data?
 
 
 #### Scrape Wikipedia ####
@@ -45,8 +51,8 @@ test_info_dict = {
     5:{"name": "Josip Stanišić"}
 }
 wcs = WikiContentScraper()
-# wcs.urls_dict, errors = get_wikipedia_links(pds.personal_info_dict)
-wcs.urls_dict, errors = get_wikipedia_links(test_info_dict)
+wcs.urls_dict, errors = get_wikipedia_links(pds.personal_info_dict)
+# wcs.urls_dict, errors = get_wikipedia_links(test_info_dict)
 print("errors from get_wikipedia_links", errors)
 wcs.run()
 print("bad links", wcs.bad_links)
