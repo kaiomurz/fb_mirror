@@ -312,13 +312,6 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
         # AWS endpoint database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com
         print('uploading FBref results to Postgres on RDS')        
 
-        # DATABASE_TYPE = 'postgresql'
-        # DBAPI = 'psycopg2'
-        # ENDPOINT = 'database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com'
-        # USER = 'postgres'
-        # PASSWORD = '53ormonde' #(Change to AICore22)
-        # PORT = '5432'
-        # DATABASE = 'postgres'
 
         with open('aws_config.yml', 'r') as f:
             aws_credentials = yaml.load(f, Loader=yaml.FullLoader)
@@ -336,7 +329,7 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
 
         engine.connect()
 
-        
+
         self.personal_info_df.to_sql(
             'personal_info',
             con=engine,

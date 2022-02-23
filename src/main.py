@@ -18,7 +18,7 @@ if not exists('./aws_config.yml'):
 
 
 number_of_clubs = 5
-number_of_players = 10
+number_of_players = 5
 
 #### Scrape FBRef ####
 club_urls_scraper = ClubURLsScraper()

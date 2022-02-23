@@ -1,6 +1,8 @@
+from distutils.command.config import config
 from operator import ne
 import shutil
 import json
+import yaml
 from typing import Tuple
 import os
 import re
@@ -12,6 +14,7 @@ import requests
 from bs4 import BeautifulSoup
 
 import boto3
+from botocore.config import Config
 from sqlalchemy import except_all
 if 'boto3' in dir():
     print('boto3 imported')
@@ -427,7 +430,21 @@ class WikiContentScraper(a.AbstractScraper):
         with open('wiki_result.json','w') as f:
             json.dump(self.consolidated_dict, f)
         
-        s3_client = boto3.client('s3')
+        #get and set s3 credentials
+        with open('aws_config.yml', 'r') as f:
+            aws_credentials = yaml.load(f, Loader=yaml.FullLoader)
+
+        my_config = Config(            
+            region_name = aws_credentials['region_name']
+        )
+
+        s3_client = boto3.client(
+            's3',
+            config = my_config,
+            aws_access_key_id = aws_credentials['access_key_id'],
+            aws_secret_access_key = aws_credentials['secret_access_key'],            
+        )
+
         BUCKET = 'fbaggregatorimages'
 
         # Delete existing images and wiki_json in s3

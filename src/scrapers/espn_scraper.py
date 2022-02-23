@@ -1,5 +1,6 @@
 import concurrent.futures
 import json
+import yaml
 import os
 from numpy import safe_eval
 
@@ -7,6 +8,8 @@ from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
 import boto3
+from botocore.config import Config
+
 
 try:
     from src.scrapers import abstract_scraper as a  # works for unittest
@@ -134,7 +137,20 @@ class ESPNScraper(a.AbstractScraper):
         with open('espn_result.json','w') as f:
             json.dump(self.news_dict, f)
 
-        s3_client = boto3.client('s3')
+        with open('aws_config.yml', 'r') as f:
+            aws_credentials = yaml.load(f, Loader=yaml.FullLoader)
+
+        my_config = Config(            
+            region_name = aws_credentials['region_name']
+        )
+
+        s3_client = boto3.client(
+            's3',
+            config = my_config,
+            aws_access_key_id = aws_credentials['access_key_id'],
+            aws_secret_access_key = aws_credentials['secret_access_key'],            
+        )
+
         response = s3_client.upload_file('espn_result.json', 'fbaggregatorimages', 'espn_result.json')
         print('espn_json uploaded')
         #delete local json
