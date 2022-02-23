@@ -1,5 +1,4 @@
 import concurrent.futures
-from tkinter import END
 
 import pandas as pd
 import requests
