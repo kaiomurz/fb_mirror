@@ -1,0 +1,14 @@
+# Credentials for S3 (aws_cli)
+access_key_id: AKIASXDRRXSWUZ7YIGOO
+secret_access_key: 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
+region: us-east-1
+
+# Credentials for RDS
+DATABASE_TYPE: 'postgresql'
+DBAPI: 'psycopg2'
+ENDPOINT: 'database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com'
+USER: 'postgres'
+PASSWORD: '53ormonde'
+PORT: '5432'
+DATABASE: 'postgres'
+

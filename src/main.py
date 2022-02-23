@@ -1,7 +1,22 @@
+from sys import exit
+from os.path import exists
+import yaml
+
 from scrapers.fbref_scrapers import ClubURLsScraper, PlayerURLsScraper, PlayerDataScraper
 from scrapers.wiki_scrapers import WikiContentScraper, get_wikipedia_links
 from scrapers.espn_scraper import ESPNScraper
 import random
+
+if not exists('./aws_config.yml'):
+    print("please copy aws_config.yml in required format into image before running it")
+    exit()
+
+with open('aws_config.yml', 'r') as f:
+    aws_credentials = yaml.load(f)
+
+# for key in aws_credentials:
+#     print(f'{key}: {aws_credentials[key]}')
+# exit()
 
 
 number_of_clubs = 5
