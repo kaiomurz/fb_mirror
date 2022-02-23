@@ -3,7 +3,7 @@ import concurrent.futures
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-
+import yaml
 from sqlalchemy import create_engine
 import psycopg2
 
@@ -174,7 +174,7 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
         
         self.personal_info_df = pd.DataFrame.from_dict(self.personal_info_dict, orient='index')
         
-        # self.save_result()
+        self.save_result()
 
     def extract_data(self):
         """
@@ -312,18 +312,31 @@ class PlayerDataScraper(a.AbstractScraper):# docstring not complete. class not y
         # AWS endpoint database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com
         print('uploading FBref results to Postgres on RDS')        
 
-        DATABASE_TYPE = 'postgresql'
-        DBAPI = 'psycopg2'
-        ENDPOINT = 'database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com'
-        USER = 'postgres'
-        PASSWORD = '53ormonde' #(Change to AICore22)
-        PORT = '5432'
-        DATABASE = 'postgres'
-            
+        # DATABASE_TYPE = 'postgresql'
+        # DBAPI = 'psycopg2'
+        # ENDPOINT = 'database-1.c4lth6izepbp.us-east-1.rds.amazonaws.com'
+        # USER = 'postgres'
+        # PASSWORD = '53ormonde' #(Change to AICore22)
+        # PORT = '5432'
+        # DATABASE = 'postgres'
+
+        with open('aws_config.yml', 'r') as f:
+            aws_credentials = yaml.load(f, Loader=yaml.FullLoader)
+
+        DATABASE_TYPE = aws_credentials['DATABASE_TYPE']
+        DBAPI = aws_credentials['DBAPI']
+        ENDPOINT = aws_credentials['ENDPOINT']
+        USER = aws_credentials['USER']
+        PASSWORD = aws_credentials['PASSWORD']
+        PORT = aws_credentials['PORT']
+        DATABASE = aws_credentials['DATABASE']
+
         engine = create_engine(f'{DATABASE_TYPE}+{DBAPI}://{USER}:{PASSWORD}@{ENDPOINT}:{PORT}/{DATABASE}')
+
+
         engine.connect()
 
-
+        
         self.personal_info_df.to_sql(
             'personal_info',
             con=engine,
