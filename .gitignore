@@ -130,7 +130,7 @@ dmypy.json
 
 # Test image files
 
-/src/test_images/
+#/src/test_images/
 
 # CSV files 
 *.csv
