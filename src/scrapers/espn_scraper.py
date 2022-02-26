@@ -10,7 +10,6 @@ from bs4 import BeautifulSoup
 import boto3
 from botocore.config import Config
 
-
 try:
     from src.scrapers import abstract_scraper as a  # works for unittest
 except:

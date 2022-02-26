@@ -1,4 +1,4 @@
-from sys import exit
+from sys import exit, argv
 from os.path import exists
 
 from scrapers.fbref_scrapers import ClubURLsScraper, PlayerURLsScraper, PlayerDataScraper
@@ -7,7 +7,7 @@ from scrapers.espn_scraper import ESPNScraper
 import random
 
 if not exists('./aws_config.yml'):
-    print("please copy aws_config.yml in required format into image before running it")
+    print("please copy aws_config.yml in required format into image before running it, as described in the Readme on Dockerhub")
     exit()
 
 
@@ -29,16 +29,32 @@ print("player url scraper created")
 club_urls_scraper.run()
 print("club url scraper created")
 
+if len(argv) > 1 and argv[1] == "full":
+    print("full mode")
+    player_urls_scraper.urls = club_urls_scraper.result### modify to do complete search
+    player_urls_scraper.run()
+    print("player url scraper created")
 
+    print(player_urls_scraper.result)
 
-player_urls_scraper.urls = club_urls_scraper.result[:number_of_clubs]### modify to do complete search
-# print(player_urls_scraper.urls)
-player_urls_scraper.run()
-print("player url scraper created")
+    keys = list(player_urls_scraper.result.keys()) ### modify to do complete search
+    print(keys)
+    # exit()
+    
+else:
+    print("demo mode")
+    number_of_clubs = 5
+    number_of_players = 5
+    print(number_of_clubs, number_of_players)
+    player_urls_scraper.urls = club_urls_scraper.result[:number_of_clubs]### modify to do complete search
+    # print(player_urls_scraper.urls)
+    player_urls_scraper.run()
+    print("player url scraper created")
 
-# print(player_urls_scraper.result)
+    # print(player_urls_scraper.result)
 
-keys = random.sample(list(player_urls_scraper.result.keys()), number_of_players) ### modify to do complete search
+    keys = random.sample(list(player_urls_scraper.result.keys()), number_of_players) ### modify to do complete search
+
 
 # print(keys)
 

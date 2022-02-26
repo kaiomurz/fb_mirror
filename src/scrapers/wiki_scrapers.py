@@ -16,8 +16,7 @@ from bs4 import BeautifulSoup
 import boto3
 from botocore.config import Config
 from sqlalchemy import except_all
-if 'boto3' in dir():
-    print('boto3 imported')
+
 
 
 try:
@@ -450,8 +449,11 @@ class WikiContentScraper(a.AbstractScraper):
         # Delete existing images and wiki_json in s3
         PREFIX = 'wiki_images/'
         response = s3_client.list_objects_v2(Bucket=BUCKET, Prefix=PREFIX) #check for capitalisation
-        for object in response['Contents']:
-            s3_client.delete_object(Bucket=BUCKET, Key=object['Key'])
+        try:
+            for object in response['Contents']:
+                s3_client.delete_object(Bucket=BUCKET, Key=object['Key'])
+        except:
+            pass
         print('s3 images deleted')    
 
 
