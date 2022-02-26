@@ -128,9 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Test image files
-
-#/src/test_images/
 
 # CSV files 
 *.csv
