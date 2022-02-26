@@ -30,6 +30,6 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ DOCKER_HUB_USERNAME }}/fb_aggregator:$(date +%s)
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fb_aggregator:$(date +%s)
           
       #run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
