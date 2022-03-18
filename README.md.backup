@@ -36,13 +36,32 @@ The data thus retrieved is stored in two dataframes, one for personal informatio
 
 ```main.py``` coordinates the entire entire pipeline. 
 
-
-
-
 ## How to run the project
-Simply run ```main.py```, assuming the required packages are available (see section on packages required at the end of this document). The script will instantiate all the necessary scrapers, run them, and sling the data into a PostgreSQL table on an AWS RDS instance or an S3 bucket on AWS as appropriate. 
 
-_Important: to ensure that the script runs quickly enough, it's best to crawl data on a small sample of the players. I recommend setting the_ ```number_of_clubs``` _and_ ```number_of_players``` _variables at the beginning of the script to 3 and 5 respectively_
+The scraper will send the data to a PostgresQL database and S3 bucket. For that, please create an  
+- empty PostgresQL database named 'FB_Aggregator' on an AWS RDS instance and
+- an S3 bucket.
+
+Then create a YAML file ```aws_config.yml```  with the following content:  
+
+```# Credentials for S3 (aws\_cli)  
+access\_key\_id: \<your AWS access key id>  
+secret\_access\_key: \<your AWS secret access key id>  
+region\_name: \<your AWS region name>  
+
+\# Credentials for RDS  
+DATABASE_TYPE: 'postgresql'  
+DBAPI: 'psycopg2'  
+ENDPOINT: \<your AWS RDS endpoint>  
+USER: \<username for your database>  
+PASSWORD: \<password for your database>  
+PORT: '5432'  
+DATABASE: 'postgres'  
+```
+
+Make sure the required packages are available (see requirements.txt). Then simply run ```main.py``` from the root folder. The script will instantiate all the necessary scrapers, run them, and sling the data into a PostgreSQL table on an AWS RDS instance or an S3 bucket on AWS as appropriate. 
+
+_Important: to ensure that the script runs quickly enough, by default it will run in demo mode on a small sample of the players. Add the argument ```full``` after ```main.py``` to run the scraper on all the players of the biggest five European football leagues._
 
 The inspect the sort of data collected, you can run the script in a Python or iPython shell. At the end of the run, three objects will be available to the user:   
 - ```pds``` of class ```PlayerDataScraper```,   
@@ -79,7 +98,7 @@ Additionally, the ```wcs``` object would have also downloaded any images on the 
 There are comprehensive docstrings available for both these objects that can be accessed by ```help(<object name>)```.
 
 ## Yet to be implemented
-- containerise the applideploy to the cloud
+- containerise the application and deploy to the cloud
 
 ## Packages required
 
