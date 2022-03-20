@@ -9,13 +9,14 @@ The objective of the project is to
 The idea is not necessarily to scrape large volumes of data but to demonstrate ways to:  
 - scrape data on a single entity from disparate data sources and combine them under the reference of that single entity,  
 - scrape different types of data eg. tabular, text, images, etc.  
+- demonstrate how to extract text from a Wikipedia page and store it in a manner that can make it retrievable using section headings. 
 - store data in more than one database type,  
 - scrape different kinds of sites, including ones needing browser interaction and JavaScript execution.  
 - deploy the scraper in a Docker container on EC2 and have it run at regular intervals.
 
 #### Intended functionality:  
 - Crawl [FBRef](https://fbref.com/) to get a list of players in the top European football leagues and stats on the players. _(structured data)_
-- Based of names of players in the first database, figure out the correct Wikipedia link for each player using results from DuckDuckGo's api and then scrape the images and the article from the page. Retrieve the article and its headings structure so it can be stored as a json object _(using APIs, scraping unstructured data and extracting structure, and scraping images)_  
+- Based of names of players in the first database, infer the correct Wikipedia link for each player using results from DuckDuckGo's API and then scrape the images and the article from the page. Retrieve the article and its headings structure so it can be stored as a json object that can be searched using keys _(using APIs, scraping unstructured data and extracting structure, and scraping images)_  
 - Access the most recent news headlines on player as they appear in the autocomplete in the search box of [ESPN](https://www.espn.co.uk/football/). _(interacting with browser elements and executing JavaScript)_.  
   
 
@@ -33,11 +34,11 @@ There are three different scraper classes in ```fbref_scrapers.py```. These incl
 The data thus retrieved is stored in two dataframes, one for personal information (one row per player) and one that accumulates all the statistics on the player's page (one row for every season for every player). Both the tables have a ```player_id``` column that could be used to join them for SQL queries. 
 
 
+## How to run the app
 
-```main.py``` coordinates the entire entire pipeline. 
+There are two ways to run this app - by cloning this repository or by using a [docker container](https://hub.docker.com/repository/docker/kaiomurz/fb_aggregator). The README on Docker Hub has instructions on how to run the container. Here are the instructions of how to use the code in this repo.  
 
-## How to run the project
-
+_Preparing the data sinks_  
 The scraper will send the data to a PostgresQL database and S3 bucket. For that, please create an    
 - empty PostgresQL database named 'FB_Aggregator' on an AWS RDS instance and  
 - an S3 bucket.
@@ -45,11 +46,11 @@ The scraper will send the data to a PostgresQL database and S3 bucket. For that,
 Then create a YAML file ```aws_config.yml```  with the following content:  
 
 ```# Credentials for S3 (aws\_cli)  
-access\_key\_id: \<your AWS access key id>  
-secret\_access\_key: \<your AWS secret access key id>  
+access_key_id: <your AWS access key id>  
+secret_access_key: <your AWS secret access key id>  
 region\_name: \<your AWS region name>  
 
-\# Credentials for RDS  
+# Credentials for RDS  
 DATABASE_TYPE: 'postgresql'  
 DBAPI: 'psycopg2'  
 ENDPOINT: \<your AWS RDS endpoint>  
@@ -57,13 +58,18 @@ USER: \<username for your database>
 PASSWORD: \<password for your database>  
 PORT: '5432'  
 DATABASE: 'postgres'  
-```
+```  
 
-Make sure the required packages are available (see requirements.txt). Then simply run ```main.py``` from the root folder. The script will instantiate all the necessary scrapers, run them, and sling the data into a PostgreSQL table on an AWS RDS instance or an S3 bucket on AWS as appropriate. 
 
-_Important: to ensure that the script runs quickly enough, by default it will run in demo mode on a small sample of the players. Add the argument ```full``` after ```main.py``` to run the scraper on all the players of the biggest five European football leagues._
+Make sure the required packages are available (easily done by creating a virtual environment using the included ```requirements.txt```).  
 
-The inspect the sort of data collected, you can run the script in a Python or iPython shell. At the end of the run, three objects will be available to the user:   
+Then simply run ```main.py``` from the root folder. The script will instantiate all the necessary scrapers, run them, and sling the data into a PostgreSQL table on an AWS RDS instance or an S3 bucket on AWS as appropriate. 
+
+_Important: to ensure that the script runs quickly enough, by default it will run in demo mode on a small sample of the players. Add the argument ```full``` after ```main.py``` to run the scraper on all the players of the biggest five European football leagues. If you choose the ```full``` option, the process could take several hours to complete._
+
+
+## Inspecting the objects created
+To inspect the sort of data collected, you can run the script in a Python or iPython shell. At the end of the run, three objects will be available to the user:   
 - ```pds``` of class ```PlayerDataScraper```,   
 - ```wcs``` of class ```WikiContentScraper```, and  
 - ```esc``` of class ```ESPNScraper```.  
@@ -96,9 +102,6 @@ Additionally, the ```wcs``` object would have also downloaded any images on the 
 ```esc.news_dict``` returns a dictionary with player_id as key and a list containing tuples (news headline, link)
 
 There are comprehensive docstrings available for both these objects that can be accessed by ```help(<object name>)```.
-
-## Yet to be implemented
-- containerise the application and deploy to the cloud
 
 ## Packages required
 
