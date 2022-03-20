@@ -48,14 +48,14 @@ Then create a YAML file ```aws_config.yml```  with the following content:
 ```# Credentials for S3 (aws\_cli)  
 access_key_id: <your AWS access key id>  
 secret_access_key: <your AWS secret access key id>  
-region\_name: \<your AWS region name>  
+region_name: <your AWS region name>  
 
 # Credentials for RDS  
 DATABASE_TYPE: 'postgresql'  
 DBAPI: 'psycopg2'  
-ENDPOINT: \<your AWS RDS endpoint>  
-USER: \<username for your database>  
-PASSWORD: \<password for your database>  
+ENDPOINT: <your AWS RDS endpoint>  
+USER: <username for your database>  
+PASSWORD: <password for your database>  
 PORT: '5432'  
 DATABASE: 'postgres'  
 ```  

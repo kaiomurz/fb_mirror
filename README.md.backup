@@ -46,16 +46,16 @@ The scraper will send the data to a PostgresQL database and S3 bucket. For that,
 Then create a YAML file ```aws_config.yml```  with the following content:  
 
 ```# Credentials for S3 (aws\_cli)  
-access\_key\_id: \<your AWS access key id>  
-secret\_access\_key: \<your AWS secret access key id>  
-region\_name: \<your AWS region name>  
+access_key_id: <your AWS access key id>  
+secret_access_key: <your AWS secret access key id>  
+region_name: <your AWS region name>  
 
 # Credentials for RDS  
 DATABASE_TYPE: 'postgresql'  
 DBAPI: 'psycopg2'  
-ENDPOINT: \<your AWS RDS endpoint>  
-USER: \<username for your database>  
-PASSWORD: \<password for your database>  
+ENDPOINT: <your AWS RDS endpoint>  
+USER: <username for your database>  
+PASSWORD: <password for your database>  
 PORT: '5432'  
 DATABASE: 'postgres'  
 ```  
@@ -65,7 +65,7 @@ Make sure the required packages are available (easily done by creating a virtual
 
 Then simply run ```main.py``` from the root folder. The script will instantiate all the necessary scrapers, run them, and sling the data into a PostgreSQL table on an AWS RDS instance or an S3 bucket on AWS as appropriate. 
 
-_Important: to ensure that the script runs quickly enough, by default it will run in demo mode on a small sample of the players. Add the argument ```full``` after ```main.py``` to run the scraper on all the players of the biggest five European football leagues. If you choose the ```full``` option, the process could take several hours to complete._
+_Important: to ensure that the script runs quickly enough, by default it will run in demo mode on a small sample of the players. Add the argument ```_full_``` after ```main.py``` to run the scraper on all the players of the biggest five European football leagues. If you choose the ```full``` option, the process could take several hours to complete._
 
 
 ## Inspecting the objects created
