@@ -1,23 +1,25 @@
 # fb_aggregator
 
-## Project Summary
-The objective of the project is to   
-- scrape data on footballers from various sources,  
-- link the data from all the sources to one ```player_id``` per player so that it can be attributed to individual footballers, and  
-- store the data in appropriate data sinks on AWS. 
-
-The idea is not necessarily to scrape large volumes of data but to demonstrate ways to:  
-- scrape data on a single entity from disparate data sources and combine them under the reference of that single entity,  
-- scrape different types of data eg. tabular, text, images, etc.  
-- demonstrate how to extract text from a Wikipedia page and store it in a manner that can make it retrievable using section headings. 
-- store data in more than one database type,  
-- scrape different kinds of sites, including ones needing browser interaction and JavaScript execution.  
-- deploy the scraper in a Docker container on EC2 and have it run at regular intervals.
+## Objective
+The objective of the project is to implement an end-to-end complex and multi-source data collection, transformation, and storage pipeline that can be containerised to periodically run from a cloud server. Key aspects involve:
+- scraping data on a single entity from disparate data sources and combining them under the reference of that single entity,  
+- automating entity resolution, 
+- extracting the structure of text from a Wikipedia page and storing the text in a manner that can make it retrievable using section headings, 
+- scraping various types of data - tabular, text, images, and storing it in relevant database types on cloud servers,  
+- scraping different kinds of sites, including ones needing browser interaction and JavaScript execution,   
+- deploying the scraper in a Docker container on EC2 and have it run at regular intervals, 
+- monitoring the operation using tools such as Prometheus and Grafana, and 
+- implementing the entire project using robust software engineering principles that include testing and CICD.
 
 #### Intended functionality:  
-- Crawl [FBRef](https://fbref.com/) to get a list of players in the top European football leagues and stats on the players. _(structured data)_
-- Based of names of players in the first database, infer the correct Wikipedia link for each player using results from DuckDuckGo's API and then scrape the images and the article from the page. Retrieve the article and its headings structure so it can be stored as a json object that can be searched using keys _(using APIs, scraping unstructured data and extracting structure, and scraping images)_  
-- Access the most recent news headlines on player as they appear in the autocomplete in the search box of [ESPN](https://www.espn.co.uk/football/). _(interacting with browser elements and executing JavaScript)_.  
+The aim is to 
+- scrape and process data on footballers from various sources, 
+- link the data from all the sources to one ```player_id``` per player so that it can be attributed to individual footballers, and    
+- store the data in appropriate data sinks on AWS. 
+This involves
+- Crawling [FBRef](https://fbref.com/) to get a list of players in the top European football leagues and stats on the players. _(structured data)_
+- Based of names of players in the first database, infering the correct Wikipedia link for each player using results from DuckDuckGo's API and then scraping the images and the article from the page. Retrieving the article and its headings structure so it can be stored as a json object that can be searched using keys _(using APIs, scraping unstructured data and extracting structure, and scraping images)_  
+- Accessing the most recent news headlines on player as they appear in the autocomplete in the search box of [ESPN](https://www.espn.co.uk/football/). _(interacting with browser elements and executing JavaScript)_.  
   
 
 ## Project structure
