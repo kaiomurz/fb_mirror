@@ -1,5 +1,7 @@
 # fb_aggregator
 
+![project_chart](project_chart.jpg)
+
 ## Objective
 The objective of the project is to implement an end-to-end complex and multi-source data collection, transformation, and storage pipeline that can be containerised to periodically run from a cloud server. Key aspects involve:
 - scraping data on a single entity from disparate data sources and combining them under the reference of that single entity,  
